@@ -1,0 +1,36 @@
+{
+    "name": "elkarhba",
+    "version": "1.0.0",
+    "description": "Node.js + MySQL API",
+    "license": "MIT",
+    "scripts": {
+        "start": "nodemon ./server.js",
+        "start:dev": "nodemon ./server.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.2",
+        "cloudflare": "^0.0.8",
+        "cors": "^2.8.5",
+        "express": "^4.17.3",
+        "express-jwt": "^6.0.0",
+        "formidable": "^2.0.1",
+        "geolocation-utils": "^1.2.5",
+        "image-to-base64": "^2.2.0",
+        "joi": "^17.2.0",
+        "jsdom": "^19.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "multer": "^1.4.4",
+        "mysql2": "^2.1.0",
+        "node-base64-image": "^2.0.4",
+        "nodemailer": "^6.7.2",
+        "object-detection": "^0.0.3",
+        "pdfkit": "^0.13.0",
+        "rootpath": "^0.1.2",
+        "sequelize": "^6.3.4",
+        "ts-mysql-autocomplete": "^0.0.2"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    }
+}
