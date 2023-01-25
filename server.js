@@ -43,16 +43,17 @@ app.use('/fichiers', require('./fichiers/fichier.controller'));
 app.use('/logs', require('./logs/log.controller'));
 app.use('/offres', require('./modules/offres/offre.controller'));
 app.use('/offres_dispo', require('./modules/offres_dispo/offred.controller'));
+app.use('/carnets', require('./modules/carnets/carnet.controller'));
 // global error handler
 app.use(errorHandler);
 
 // start server local
-const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
-app.listen(port, () => console.log('Server listening on port ' + port));
+// const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
+// app.listen(port, () => console.log('Server listening on port ' + port));
 
 // start server
-// console.log('Server listening on port 443');
-// https.createServer(options, app).listen(443);
+console.log('Server listening on port 443');
+https.createServer(options, app).listen(443);
 
 // //LocalTunnel
 // (async () => {

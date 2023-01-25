@@ -18,7 +18,7 @@ module.exports = {
 
 
 async function getAll() {
-    offres = await db.Offre_Dispo.findAll(); 
+    offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
     var ofs = JSON.parse(JSON.stringify(offres));
     var res = [];
     if (ofs.length) {

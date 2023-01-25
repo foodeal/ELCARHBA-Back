@@ -8,6 +8,7 @@ const offreService = require('./offre.service');
 // routes
 router.post('/add',authorize(), addSchema, add);
 router.get('/', getAll);
+router.get('/filterprix', filterPrix);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', getById);
 router.get('/fichiers/:id', authorize(), getFichiers);
@@ -35,29 +36,35 @@ function addSchema(req, res, next) {
 
 function add(req, res, next) {
     offreService.create(req)
-        .then(am => res.json(am))
+        .then(offre => res.json(offre))
         .catch(next);
 }
 
 function getFichiers(req, res, next) {
     offreService.getFichiers(req.params.id)
-        .then(ams => res.json(ams))
+        .then(offres => res.json(offres))
         .catch(next);
 }
 
 function getAll(req, res, next) {
     offreService.getAll()
-        .then(ams => res.json(ams))
+        .then(offres => res.json(offres))
+        .catch(next);
+}
+
+function filterPrix(req, res, next) {
+    offreService.filterPrix(req)
+        .then(offres => res.json(offres))
         .catch(next);
 }
 
 function getCurrent(req, res, next) {
-    res.json(req.am);
+    res.json(req.offre);
 }
 
 function getById(req, res, next) {
     offreService.getById(req.params.id)
-        .then(am => res.json(am))
+        .then(offre => res.json(offre))
         .catch(next);
 }
 
@@ -78,7 +85,7 @@ function updateSchema(req, res, next) {
 
 function update(req, res, next) {
     offreService.update(req.params.id, req)
-        .then(am => res.json(am))
+        .then(offre => res.json(offre))
         .catch(next);
 }
 

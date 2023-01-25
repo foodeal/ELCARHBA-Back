@@ -10,6 +10,7 @@ module.exports = {
     create,
     update,
     getFichiers,
+    filterPrix,
     findOffre,
     delete: _delete
 };
@@ -96,6 +97,26 @@ async function _delete(params) {
 }
 
 // helper functions
+
+async function filterPrix(params) {
+    console.log(params);
+    const offres = await db.Offre.findAll({ where: { [Op.and] : [
+        { prix_initial: { [Op.between]: [+params.body.min, +params.body.max] } }
+    ]}});
+
+
+
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+    }
+    console.log(res);
+    return res; 
+    }
+}
 
 async function getOffre(id) {
     const offre = await db.Offre.findByPk(id);

@@ -34,7 +34,7 @@ async function create(params) {
     params.msg = "Ajout de favori ID : " + favori.id;
     await db.Log.create(params);
 
-    return await omitHash(am.get());
+    return await omitHash(favori.get());
 }
 
 async function update(id, params) {

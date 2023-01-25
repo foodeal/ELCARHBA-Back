@@ -34,7 +34,7 @@ async function create(params) {
     params.msg = "Ajout de Reservation ID : " + reservation.id;
     await db.Log.create(params);
 
-    return await omitHash(am.get());
+    return await omitHash(reservation.get());
 }
 
 async function update(id, params) {
