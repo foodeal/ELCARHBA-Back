@@ -45,7 +45,17 @@ async function getData(off) {
 }
 
 async function getById(id) {
-    return await getOffre(id);
+    var offre = await db.Offre.findOne({ where: { id: id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
+    const garage = await db.Garage.findAll({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
+    let b = {
+        'files': file,
+        'garage': garage,
+        'prestataire': prestataire
+    }
+    offre = Object.assign(offre, b);
+    return (offre);
 }
 
 async function create(params) {

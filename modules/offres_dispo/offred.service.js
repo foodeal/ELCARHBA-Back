@@ -86,7 +86,7 @@ async function getBest() {
 async function getData(off) {
     const offre = await db.Offre.findOne({ where: { id: off.id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
-    const garage = await db.Garage.findAll({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     let b = {
         'offre': offre,
@@ -100,7 +100,19 @@ async function getData(off) {
 
 
 async function getById(id) {
-    return await getOffre(id);
+    var dispo = await db.Offre_Dispo.findOne({ where: { id: id }, raw: true });
+    const offre = await db.Offre.findOne({ where: { id: dispo.offre_id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { offre: dispo.offre_id }, raw: true });
+    const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
+    let b = {
+        'offre': offre,
+        'files': file,
+        'garage': garage,
+        'prestataire': prestataire
+    }
+    dispo = Object.assign(dispo, b);
+    return (dispo);
 }
 
 async function create(params) {
