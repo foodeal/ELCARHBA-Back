@@ -37,6 +37,8 @@ async function getById(id) {
 }
 
 async function create(params) {
+
+    console.log(params);
     // validate
     if (await db.User.findOne({ where: { email: params.email } })) {
         throw 'Email "' + params.email + '" existe déjà';

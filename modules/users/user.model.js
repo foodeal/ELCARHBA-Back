@@ -3,10 +3,10 @@ module.exports = User;
 
 function User(sequelize) {
     const attributes = {
-        nom_utilisateur: { type: DataTypes.STRING, allowNull: false },
-        prenom_utilisateur: { type: DataTypes.STRING, allowNull: false },
-        date_naissance: { type: DataTypes.DATEONLY, allowNull: false },
-        email: { type: DataTypes.STRING, allowNull: false },
+        nom_utilisateur: { type: DataTypes.STRING, allowNull: true },
+        prenom_utilisateur: { type: DataTypes.STRING, allowNull: true },
+        date_naissance: { type: DataTypes.DATEONLY, allowNull: true },
+        email: { type: DataTypes.STRING, allowNull: true },
         tel_utilisateur: { type: DataTypes.STRING, allowNull: true },
         role: { type: DataTypes.STRING, allowNull: true },
         pays_user: { type: DataTypes.STRING, allowNull: true },
