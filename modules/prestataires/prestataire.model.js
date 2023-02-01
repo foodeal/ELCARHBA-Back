@@ -19,7 +19,8 @@ function Prestataire(sequelize) {
         registre_commerce: { type: DataTypes.STRING, allowNull: true },
         cin_gerant: { type: DataTypes.STRING, allowNull: true },
         contrat_condition: { type: DataTypes.STRING, allowNull: true },
-        motdepasse: { type: DataTypes.STRING, allowNull: true }
+        motdepasse: { type: DataTypes.STRING, allowNull: true },
+        categorie: { type: DataTypes.STRING, allowNull: true }
     };
 
     const options = {

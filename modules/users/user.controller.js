@@ -38,14 +38,15 @@ function registerSchema(req, res, next) {
         nom_utilisateur: Joi.string(),
         prenom_utilisateur: Joi.string(),
         date_naissance: Joi.date(),
-        email: Joi.string().email(),
+        email: Joi.string().email().required(),
         tel_utilisateur: Joi.string(),
         role: Joi.string(),
         pays_user: Joi.string(),
         ville_user: Joi.string(),
         adresse_user: Joi.string(),
-        motdepasse: Joi.string().min(6),
+        motdepasse: Joi.string().min(6).required(),
         argent_gagner: Joi.number(),
+        point_gagner: Joi.number()
     });
     validateRequest(req, next, schema);
 }
@@ -95,8 +96,9 @@ function updateSchema(req, res, next) {
         pays_user: Joi.string().empty(''),
         ville_user: Joi.string().empty(''),
         adresse_user: Joi.string().empty(''),
-        motdepasse: Joi.string().min(6).required(),
+        motdepasse: Joi.string().min(6),
         argent_gagner: Joi.number(),
+        point_gagner: Joi.number()
     });
     validateRequest(req, next, schema);
 }

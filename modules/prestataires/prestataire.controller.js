@@ -52,6 +52,7 @@ function registerSchema(req, res, next) {
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
         motdepasse: Joi.string().min(6),
+        categorie: Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -104,6 +105,7 @@ function updateSchema(req, res, next) {
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
         motdepasse: Joi.string().min(6),
+        categorie: Joi.string()
     });
     validateRequest(req, next, schema);
 }

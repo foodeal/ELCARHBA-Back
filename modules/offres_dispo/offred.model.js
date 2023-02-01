@@ -9,6 +9,10 @@ function Offre_Dispo(sequelize) {
         statut: { type: DataTypes.TEXT, allowNull: true },
         nombre_offres: { type: DataTypes.INTEGER, allowNull: true },
         offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
+        categorie: { type: DataTypes.STRING, allowNull: true },
+        motorisation: { type: DataTypes.STRING, allowNull: true },
+        diametre: { type: DataTypes.STRING, allowNull: true },
+        type_huile: { type: DataTypes.STRING, allowNull: true }
     };
 
     const options = {

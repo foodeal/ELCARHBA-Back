@@ -28,6 +28,10 @@ function addSchema(req, res, next) {
         nombre_offres: Joi.number(),
         statut: Joi.string(),
         offre_id: Joi.number(),
+        categorie: Joi.string(),
+        motorisation: Joi.string(),
+        diametre: Joi.string(),
+        type_huile: Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -79,7 +83,11 @@ function updateSchema(req, res, next) {
         quantite: Joi.number(),
         nombre_offres: Joi.number(),
         statut: Joi.string(),
-        offre_id: Joi.number()
+        offre_id: Joi.number(),
+        categorie: Joi.string(),
+        motorisation: Joi.string(),
+        diametre: Joi.string(),
+        type_huile: Joi.string()
     });
     validateRequest(req, next, schema);
 }

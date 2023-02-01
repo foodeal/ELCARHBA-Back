@@ -14,6 +14,8 @@ module.exports = {
     create,
     update,
     findCoupon,
+    getData,
+    getDataCoupon,
     delete: _delete
 };
 
@@ -85,7 +87,7 @@ async function create(params) {
     params.body.code_coupon = await bcrypt.hash(code, 10);
     console.log(params.body.code_coupon);
     const coupon = await db.Coupon.create(params.body);
-
+    const couponData = await getDataCoupon(coupon.get());
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
@@ -94,7 +96,8 @@ async function create(params) {
     params.mod = "Coupon";
     params.msg = "Ajout de Coupon ID : " + coupon.id;
     await db.Log.create(params);
-    return await omitHash(coupon.get());
+
+    return await omitHash(couponData);
 }
 
 async function update(id, params) {
@@ -131,6 +134,21 @@ async function _delete(params) {
 }
 
 // helper functions
+async function getDataCoupon(off) {
+    console.log(off.id);
+    const offre = await db.Offre.findOne({ where: { id: off.offre_id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
+    const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
+    const prestataire = await db.Prestataire.findOne({ where: { id: off.prestataire_id }, raw: true });
+    let b = {
+        'offre': offre,
+        'files': file,
+        'garage': garage,
+        'prestataire': prestataire
+    }
+    off = Object.assign(off, b);
+    return (off)
+}
 
 async function getCoupon(id) {
     const coupon = await db.Coupon.findByPk(id);
