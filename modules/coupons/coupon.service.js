@@ -26,7 +26,7 @@ async function getAll() {
     var res = [];
     if (cps.length) {
     for (let i=0; i < cps.length; i++) {
-        const cpsf = await getData(cps[i]);
+        const cpsf = await getDataCoupon(cps[i]);
         res = res.concat(cpsf);
     }
     console.log(res);
@@ -50,36 +50,58 @@ async function getData(cp) {
 }
 
 async function getCouponDispo() {
-    coupon = await db.Coupon.findAll({ where: { date_valide_coupon : { [Op.gt]: new Date() } } });
-
-    if (!coupon) {throw 'Vide' }
-    else return await coupon;
+    coupons = await db.Coupon.findAll({ where: { date_valide_coupon : { [Op.gt]: new Date() } } });
+    var cps = JSON.parse(JSON.stringify(coupons));
+    var res = [];
+    if (cps.length) {
+    for (let i=0; i < cps.length; i++) {
+        const cpsf = await getDataCoupon(cps[i]);
+        res = res.concat(cpsf);
+    }
+    console.log(res);
+    return res; 
+    }
 }
 
 async function getById(id) {
-    return await getCoupon(id);
+    const coupon = await db.Coupon.findByPk(id);
+    if (!coupon) throw 'Pas de Coupon';
+    const couponData = await getDataCoupon(coupon.get());
+    return await omitHash(couponData);
 }
 
 async function getExpired(id) {
-    const coupon = await db.Coupon.findAll({ where: { [Op.and] : [
+    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
         { user_id: id },
         { coupon_expire: true}
     ]}});
-    if (coupon) {
-    return coupon;
+    var cps = JSON.parse(JSON.stringify(coupons));
+    var res = [];
+    if (cps.length) {
+    for (let i=0; i < cps.length; i++) {
+        const cpsf = await getDataCoupon(cps[i]);
+        res = res.concat(cpsf);
     }
-    else throw "pas de coupon expire"
+    console.log(res);
+    return res; 
+    }
 }
 
 async function getValide(id) {
-    const coupon = await db.Coupon.findAll({ where: { [Op.and] : [
+    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
         { user_id: id },
         { coupon_valide: true}
     ]}});
-    if (coupon) {
-    return coupon;
+    var cps = JSON.parse(JSON.stringify(coupons));
+    var res = [];
+    if (cps.length) {
+    for (let i=0; i < cps.length; i++) {
+        const cpsf = await getDataCoupon(cps[i]);
+        res = res.concat(cpsf);
     }
-    else throw "pas de coupon valide"
+    console.log(res);
+    return res; 
+    }
 }
 
 async function create(params) {
@@ -136,11 +158,13 @@ async function _delete(params) {
 // helper functions
 async function getDataCoupon(off) {
     console.log(off.id);
-    const offre = await db.Offre.findOne({ where: { id: off.offre_id }, raw: true });
+    const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
+    const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
     const prestataire = await db.Prestataire.findOne({ where: { id: off.prestataire_id }, raw: true });
     let b = {
+        'offre_dispo': offre_dispo,
         'offre': offre,
         'files': file,
         'garage': garage,
@@ -151,9 +175,9 @@ async function getDataCoupon(off) {
 }
 
 async function getCoupon(id) {
-    const coupon = await db.Coupon.findByPk(id);
+    coupon = await db.Coupon.findByPk(id);
     if (!coupon) throw 'Pas de Coupon';
-    return coupon;
+    return getDataCoupon(coupon);
 }
 
 
@@ -173,3 +197,26 @@ function omitHash(coupon) {
     const { hash, ...couponWithoutHash } = coupon;
     return couponWithoutHash;
 }
+
+// Schedule 
+const schedule = require('node-schedule');
+
+var d = (new Date(new Date().getTime())).toISOString();
+const job = schedule.scheduleJob('1 0 * * *', async function(){
+    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
+        { date_valide_coupon : {[Op.lt]: d } },
+        { coupon_expire : false}
+    ]}});
+    var ofs = JSON.parse(JSON.stringify(coupon));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        console.log(ofs[i]);
+        ofs[i].coupon_expire = true;
+        console.log(ofs[i]);
+        const coupon = await getCoupon(ofs[i].id);
+        Object.assign(coupon, ofs[i]);
+        await coupon.save();
+    }
+    }
+});

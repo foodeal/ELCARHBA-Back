@@ -3,7 +3,7 @@ module.exports = User_Favori;
 
 function User_Favori(sequelize) {
     const attributes = {
-        coupon_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Coupons', key: 'id' } },
+        offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
         user_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Users', key: 'id' } }
     };
 

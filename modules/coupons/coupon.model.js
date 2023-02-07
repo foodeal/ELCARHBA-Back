@@ -7,7 +7,7 @@ function Coupon(sequelize) {
         date_valide_coupon: { type: DataTypes.DATEONLY, allowNull: false },      
         quantite: { type: DataTypes.INTEGER, allowNull: true },
         prestataire_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Prestataires', key: 'id' } },
-        offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
+        offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offre_Dispos', key: 'id' } },
         user_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Users', key: 'id' } },
         coupon_valide: { type: DataTypes.BOOLEAN, allowNull: true },
         coupon_expire: { type: DataTypes.BOOLEAN, allowNull: true },

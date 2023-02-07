@@ -2,6 +2,7 @@
 const db = require('../../helpers/db');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const schedule = require('node-schedule');
 
 
 module.exports = {
@@ -13,6 +14,7 @@ module.exports = {
     findOffre,
     getAvant,
     getBest,
+    getFilter,
     delete: _delete
 };
 
@@ -190,7 +192,52 @@ async function findOffre(params) {
     { throw 'Vide' ;}
 }
 
+async function getFilter(params) {
+    const allOffres = await db.Offre_Dispo.findAll();
+    if (params)
+    {
+        if (params.categorie) {
+        const offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
+           { categorie: params.categories  },
+        //    { date_fin: {[Op.like]: params.date_fin + '%'} }
+        ]}});
+        }  
+        if (params.categorie) {
+        const offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
+            { categorie: params.categories  },
+            //    { date_fin: {[Op.like]: params.date_fin + '%'} }
+        ]}});
+        }  
+        if (!offre) {throw 'Vide' }
+        else return await offre;
+    } else 
+    { throw 'Vide' ;}
+}
+
 function omitHash(offre) {
     const { hash, ...offreWithoutHash } = offre;
     return offreWithoutHash;
 }
+
+// Schedule 
+// var d = new Date();
+// d.setHours(0,0,0,0);
+var d = (new Date(new Date().getTime())).toISOString();
+const job = schedule.scheduleJob('1 0 * * *', async function(){
+    offres = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
+        { date_fin: {[Op.lt]: d } },
+        { offre_expired : false}
+    ]}});
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        console.log(ofs[i]);
+        ofs[i].offre_expired = true;
+        console.log(ofs[i]);
+        const offre = await getOffre(ofs[i].id);
+        Object.assign(offre, ofs[i]);
+        await offre.save();
+    }
+    }
+});

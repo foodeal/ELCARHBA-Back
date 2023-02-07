@@ -12,8 +12,10 @@ router.get('/best', getBest);
 router.get('/avant', getAvant);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', getById);
+router.get('/:categorie', getByCategorie);
 router.get('/fichiers/:id', authorize(), getFichiers);
 router.post('/soffre/', findOffre);
+router.post('/filter/', getFilter);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
 
@@ -31,7 +33,8 @@ function addSchema(req, res, next) {
         categorie: Joi.string(),
         motorisation: Joi.string(),
         diametre: Joi.string(),
-        type_huile: Joi.string()
+        type_huile: Joi.string(),
+        offre_expired: Joi.boolean()
     });
     validateRequest(req, next, schema);
 }
@@ -76,6 +79,18 @@ function getById(req, res, next) {
         .catch(next);
 }
 
+function getByCategorie(req, res, next) {
+    offreService.getByCategorie(req.params.categorie)
+        .then(am => res.json(am))
+        .catch(next);
+}
+
+function getFilter(req, res, next) {
+    offreService.getFilter(req.body)
+        .then(am => res.json(am))
+        .catch(next);
+}
+
 function updateSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
@@ -87,7 +102,8 @@ function updateSchema(req, res, next) {
         categorie: Joi.string(),
         motorisation: Joi.string(),
         diametre: Joi.string(),
-        type_huile: Joi.string()
+        type_huile: Joi.string(),
+        offre_expired: Joi.boolean()
     });
     validateRequest(req, next, schema);
 }

@@ -10,6 +10,7 @@ module.exports = {
     create,
     update,
     findFavori,
+    getByUser,
     delete: _delete
 };
 
@@ -23,6 +24,11 @@ async function getById(id) {
 }
 
 async function create(params) {
+    const favoriDispo = await db.User_Favori.findAll({ where: { [Op.and] : [
+        { user_id: params.body.user_id },
+        { offre_id: params.body.offre_id }
+     ]}});
+    if (!favoriDispo) {
     const favori = await db.User_Favori.create(params.body);
 
     const userToken = params.headers.authorization;
@@ -35,6 +41,10 @@ async function create(params) {
     await db.Log.create(params);
 
     return await omitHash(favori.get());
+    }
+    else {
+        throw "exist deja";
+    }
 }
 
 async function update(id, params) {
@@ -75,9 +85,42 @@ async function _delete(params) {
 async function getFavori(id) {
     const favori = await db.User_Favori.findByPk(id);
     if (!favori) throw 'Pas de favori';
-    return favori;
+    return getData(favori);
 }
 
+async function getData(fav) {
+    const offre = await db.Offre.findOne({ where: { id: fav.offre_id }, raw: true });
+    const user = await db.User.findOne({ where: { id: fav.user_id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { offre: await offre.id }, raw: true });
+    const garage = await db.Garage.findOne({ where: { prestataire_id: await offre.prestataire_id }, raw: true });
+    const prestataire = await db.Prestataire.findOne({ where: { id: await offre.prestataire_id }, raw: true });
+    let b = {
+        'user': user,
+        'offre': offre,
+        'files': file,
+        'garage': garage,
+        'prestataire': prestataire
+    }
+    fav = Object.assign(fav, b);
+    return (fav)
+}
+
+async function getByUser(id) {
+    const favori = await db.User_Favori.findAll({ where:  {user_id: id}});
+    if (!favori) {throw 'Vide' }
+    else {
+        var ofs = JSON.parse(JSON.stringify(favori));
+        var res = [];
+        if (ofs.length) {
+        for (let i=0; i < ofs.length; i++) {
+            const ofsf = await getData(ofs[i]);
+            res = res.concat(ofsf);
+        }
+        console.log(res);
+        return res; 
+        }
+    }
+}
 
 async function findFavori(params) {
     if (params)

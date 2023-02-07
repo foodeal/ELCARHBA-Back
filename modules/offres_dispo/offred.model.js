@@ -12,7 +12,8 @@ function Offre_Dispo(sequelize) {
         categorie: { type: DataTypes.STRING, allowNull: true },
         motorisation: { type: DataTypes.STRING, allowNull: true },
         diametre: { type: DataTypes.STRING, allowNull: true },
-        type_huile: { type: DataTypes.STRING, allowNull: true }
+        type_huile: { type: DataTypes.STRING, allowNull: true },
+        offre_expired: { type: DataTypes.BOOLEAN, allowNull: true }
     };
 
     const options = {

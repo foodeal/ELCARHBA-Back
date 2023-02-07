@@ -9,6 +9,7 @@ const userfService = require('./userf.service');
 router.post('/add',authorize(), addSchema, add);
 router.get('/', authorize(), getAll);
 router.get('/current', authorize(), getCurrent);
+router.get('/favoris/:id', authorize(), getByUser);
 router.get('/:id', authorize(), getById);
 router.post('/scoupon/', authorize(), findCoupon);
 router.put('/:id', authorize(), updateSchema, update);
@@ -19,7 +20,7 @@ module.exports = router;
 
 function addSchema(req, res, next) {
     const schema = Joi.object({
-        coupon_id : Joi.number(),
+        offre_id : Joi.number(),
         user_id : Joi.number()
     });
     validateRequest(req, next, schema);
@@ -47,9 +48,15 @@ function getById(req, res, next) {
         .catch(next);
 }
 
+function getByUser(req, res, next) {
+    userfService.getByUser(req.params.id)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
 function updateSchema(req, res, next) {
     const schema = Joi.object({
-        coupon_id : Joi.number(),
+        offre_id : Joi.number(),
         user_id : Joi.number()
     });
     validateRequest(req, next, schema);

@@ -11,6 +11,7 @@ router.post('/register', registerSchema, register);
 router.post('/updateMdp/', updateMdp);
 router.get('/email', getPrestataireByEmail);
 router.get('/', authorize(), getAll);
+router.get('/:categorie', getByCategorie);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.put('/:id', authorize(), updateSchema, update);
@@ -82,6 +83,12 @@ function getCurrent(req, res, next) {
 function getById(req, res, next) {
     prestataireService.getById(req.params.id)
         .then(prestataire => res.json(prestataire))
+        .catch(next);
+}
+
+function getByCategorie(req, res, next) {
+    offreService.getByCategorie(req.params.categorie)
+        .then(am => res.json(am))
         .catch(next);
 }
 
