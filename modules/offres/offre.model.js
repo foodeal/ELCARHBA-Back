@@ -11,7 +11,13 @@ function Offre(sequelize) {
         pourcentage_prix_initial: { type: DataTypes.FLOAT, allowNull: true },
         prix_remise: { type: DataTypes.FLOAT, allowNull: true },
         prestataire_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Prestataires', key: 'id' } },
-        statut: { type: DataTypes.TEXT, allowNull: true }
+        statut: { type: DataTypes.TEXT, allowNull: true },
+        categorie: { type: DataTypes.STRING, allowNull: true },
+        motorisation: { type: DataTypes.STRING, allowNull: true },
+        diametre: { type: DataTypes.STRING, allowNull: true },
+        type_huile: { type: DataTypes.STRING, allowNull: true },
+        marque: { type: DataTypes.STRING, allowNull: true },
+        modele: { type: DataTypes.STRING, allowNull: true }
     };
 
     const options = {

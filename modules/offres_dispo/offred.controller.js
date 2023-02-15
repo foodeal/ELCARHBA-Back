@@ -26,14 +26,10 @@ function addSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        quantite: Joi.number(),
+        quantite_dispo: Joi.number(),
         nombre_offres: Joi.number(),
-        statut: Joi.string(),
+        statut_dispo: Joi.string(),
         offre_id: Joi.number(),
-        categorie: Joi.string(),
-        motorisation: Joi.string(),
-        diametre: Joi.string(),
-        type_huile: Joi.string(),
         offre_expired: Joi.boolean()
     });
     validateRequest(req, next, schema);
@@ -95,14 +91,10 @@ function updateSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        quantite: Joi.number(),
+        quantite_dispo: Joi.number(),
         nombre_offres: Joi.number(),
-        statut: Joi.string(),
+        statut_dispo: Joi.string(),
         offre_id: Joi.number(),
-        categorie: Joi.string(),
-        motorisation: Joi.string(),
-        diametre: Joi.string(),
-        type_huile: Joi.string(),
         offre_expired: Joi.boolean()
     });
     validateRequest(req, next, schema);

@@ -3,6 +3,7 @@ const db = require('../../helpers/db');
 const Sequelize = require("sequelize");
 const bcrypt = require('bcryptjs');
 const Op = Sequelize.Op;
+var CryptoJS = require("crypto-js");
 
 
 module.exports = {
@@ -16,6 +17,7 @@ module.exports = {
     findCoupon,
     getData,
     getDataCoupon,
+    dcryptCode,
     delete: _delete
 };
 
@@ -105,8 +107,13 @@ async function getValide(id) {
 }
 
 async function create(params) {
-    code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon + "," + params.body.date_valide_coupon;
-    params.body.code_coupon = await bcrypt.hash(code, 10);
+    code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
+    nb = await db.Coupon.count();
+    serie = "CO" + (nb + 1);
+    // Encrypt
+    var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
+    params.body.code_coupon = codeCryp;
+    params.body.serie_coupon = serie;
     console.log(params.body.code_coupon);
     const coupon = await db.Coupon.create(params.body);
     const couponData = await getDataCoupon(coupon.get());
@@ -120,6 +127,34 @@ async function create(params) {
     await db.Log.create(params);
 
     return await omitHash(couponData);
+}
+
+async function dcryptCode(params) {
+    // Dcrypt
+    const coupon = await db.Coupon.findOne({ where: { [Op.and] : [
+        { code_coupon: params.code }
+    ]}});
+    const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: coupon.offre_id }, raw: true });
+    const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
+    const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
+    var bytes  = CryptoJS.AES.decrypt(params.code, 'elcarhba');
+    var originalText = bytes.toString(CryptoJS.enc.Utf8);
+    let b = {
+        'coupon' : coupon,
+        'offre_dispo': offre_dispo,
+        'offre': offre,
+        'files': file,
+        'garage': garage,
+        'prestataire': prestataire,
+        'code' : originalText
+    }
+    if (b) {
+        return b;
+    } else {
+        throw "vide"
+    }
 }
 
 async function update(id, params) {

@@ -5,6 +5,7 @@ const { Sequelize } = require('sequelize');
 User = require('../modules/users/user.model');
 User_Favori = require('../modules/users_favoris/userf.model');
 Prestataire = require('../modules/prestataires/prestataire.model');
+Prestataire_Dmd = require('../modules/prestataires_dmd/prestataire_dmd.model');
 Garage = require('../modules/garages/garage.model');
 Coupon = require('../modules/coupons/coupon.model');
 Coupon_Historique = require('../modules/coupons_historiques/couponh.model');
@@ -41,6 +42,7 @@ async function initialize() {
     db.Offre = require('../modules/offres/offre.model')(sequelize);
     db.Offre_Dispo = require('../modules/offres_dispo/offred.model')(sequelize);
     db.Prestataire = require('../modules/prestataires/prestataire.model')(sequelize);
+    db.Prestataire_Dmd = require('../modules/prestataires_dmd/prestataire_dmd.model')(sequelize);
     db.Garage = require('../modules/garages/garage.model')(sequelize);
     db.Service = require('../modules/services/service.model')(sequelize);
     db.Produit = require('../modules/produits/produit.model')(sequelize);

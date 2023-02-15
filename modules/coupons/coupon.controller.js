@@ -14,6 +14,7 @@ router.get('/:id', authorize(), getById);
 router.get('/expire/:id', authorize(), getExpired);
 router.get('/valide/:id', authorize(), getValide);
 router.post('/scoupon/', authorize(), findCoupon);
+router.post('/dcrypt/', authorize(), dcryptCode);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
 
@@ -30,7 +31,8 @@ function addSchema(req, res, next) {
         user_id : Joi.number(),
         coupon_valide : Joi.bool(),
         coupon_expire : Joi.bool(),
-        code_coupon : Joi.string()
+        code_coupon : Joi.string(),
+        serie_coupon : Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -85,7 +87,8 @@ function updateSchema(req, res, next) {
         user_id : Joi.number(),
         coupon_valide : Joi.bool(),
         coupon_expire : Joi.bool(),
-        code_coupon : Joi.string()
+        code_coupon : Joi.string(),
+        serie_coupon : Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -104,6 +107,12 @@ function _delete(req, res, next) {
 
 function findCoupon(req, res, next) {
     couponService.findCoupon(req.body)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function dcryptCode(req, res, next) {
+    couponService.dcryptCode(req.body)
         .then(coupon => res.json(coupon))
         .catch(next);
 }

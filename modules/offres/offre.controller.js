@@ -29,7 +29,13 @@ function addSchema(req, res, next) {
         pourcentage_prix_initial: Joi.number(),
         prix_remise: Joi.number(),
         prestataire_id: Joi.number(),
-        statut: Joi.string()
+        statut: Joi.string(),
+        categorie: Joi.string(),
+        motorisation: Joi.string(),
+        diametre: Joi.string(),
+        type_huile: Joi.string(),
+        marque: Joi.string(),
+        modele: Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -78,7 +84,13 @@ function updateSchema(req, res, next) {
         pourcentage_prix_initial: Joi.number(),
         prix_remise: Joi.number(),
         prestataire_id: Joi.number(),
-        statut: Joi.string()
+        statut: Joi.string(),
+        categorie: Joi.string(),
+        motorisation: Joi.string(),
+        diametre: Joi.string(),
+        type_huile: Joi.string(),
+        marque: Joi.string(),
+        modele: Joi.string()
     });
     validateRequest(req, next, schema);
 }

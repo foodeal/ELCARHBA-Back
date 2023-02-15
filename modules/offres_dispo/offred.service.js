@@ -2,7 +2,6 @@
 const db = require('../../helpers/db');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-const schedule = require('node-schedule');
 
 
 module.exports = {
@@ -220,8 +219,8 @@ function omitHash(offre) {
 }
 
 // Schedule 
-// var d = new Date();
-// d.setHours(0,0,0,0);
+const schedule = require('node-schedule');
+
 var d = (new Date(new Date().getTime())).toISOString();
 const job = schedule.scheduleJob('1 0 * * *', async function(){
     offres = await db.Offre_Dispo.findAll({ where: { [Op.and] : [

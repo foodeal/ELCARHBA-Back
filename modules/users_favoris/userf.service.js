@@ -16,7 +16,12 @@ module.exports = {
 
 
 async function getAll() {
-    return await db.User_Favori.findAll(); 
+    const fav = await db.User_Favori.findAll(); 
+    if (fav) {
+        return fav
+    } else {
+        return [];
+    }
 }
 
 async function getById(id) {
@@ -24,26 +29,28 @@ async function getById(id) {
 }
 
 async function create(params) {
-    const favoriDispo = await db.User_Favori.findAll({ where: { [Op.and] : [
+    console.log(params.body);
+    const favoriDispo = await db.User_Favori.findOne({ where: { [Op.and] : [
         { user_id: params.body.user_id },
         { offre_id: params.body.offre_id }
      ]}});
-    if (!favoriDispo) {
-    const favori = await db.User_Favori.create(params.body);
-
-    const userToken = params.headers.authorization;
-    const token = userToken.split(' ');
-    const decoded = jwt.verify(token[1], 'Foodealz')
-    params.date = Date.now();
-    params.utilisateur = decoded.sub;
-    params.mod = "favori";
-    params.msg = "Ajout de favori ID : " + favori.id;
-    await db.Log.create(params);
-
-    return await omitHash(favori.get());
+    console.log(favoriDispo);
+    if (favoriDispo) {
+        throw "exist deja";
     }
     else {
-        throw "exist deja";
+        const favori = await db.User_Favori.create(params.body);
+
+        const userToken = params.headers.authorization;
+        const token = userToken.split(' ');
+        const decoded = jwt.verify(token[1], 'Foodealz')
+        params.date = Date.now();
+        params.utilisateur = decoded.sub;
+        params.mod = "favori";
+        params.msg = "Ajout de favori ID : " + favori.id;
+        await db.Log.create(params);
+    
+        return await omitHash(favori.get());
     }
 }
 
@@ -107,7 +114,9 @@ async function getData(fav) {
 
 async function getByUser(id) {
     const favori = await db.User_Favori.findAll({ where:  {user_id: id}});
-    if (!favori) {throw 'Vide' }
+    if (!favori) {
+        return [];
+    }
     else {
         var ofs = JSON.parse(JSON.stringify(favori));
         var res = [];

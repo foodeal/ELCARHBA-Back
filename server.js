@@ -44,6 +44,7 @@ app.use('/logs', require('./logs/log.controller'));
 app.use('/offres', require('./modules/offres/offre.controller'));
 app.use('/offres_dispo', require('./modules/offres_dispo/offred.controller'));
 app.use('/carnets', require('./modules/carnets/carnet.controller'));
+app.use('/prestataire_dmd', require('./modules/prestataires_dmd/prestataire_dmd.controller'));
 // global error handler
 app.use(errorHandler);
 

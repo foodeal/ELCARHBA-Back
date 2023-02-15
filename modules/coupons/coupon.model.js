@@ -11,7 +11,8 @@ function Coupon(sequelize) {
         user_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Users', key: 'id' } },
         coupon_valide: { type: DataTypes.BOOLEAN, allowNull: true },
         coupon_expire: { type: DataTypes.BOOLEAN, allowNull: true },
-        code_coupon: { type: DataTypes.STRING, allowNull: true}
+        code_coupon: { type: DataTypes.STRING, allowNull: true},
+        serie_coupon: { type: DataTypes.STRING, allowNull: true}
     };
 
     const options = {
