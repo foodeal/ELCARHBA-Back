@@ -3,7 +3,7 @@ const router = express.Router();
 const Joi = require('joi');
 const validateRequest = require('../../middleware/validate-request');
 const authorize = require('../../middleware/authorize')
-const prestataireService = require('./prestataire.service');
+const prestataireService = require('./prestataire_dmd.service');
 
 // routes
 router.post('/register', registerSchema, register);

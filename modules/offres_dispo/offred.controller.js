@@ -14,6 +14,7 @@ router.get('/current', authorize(), getCurrent);
 router.get('/:id', getById);
 router.get('/:categorie', getByCategorie);
 router.get('/fichiers/:id', authorize(), getFichiers);
+router.get('/prestataire/:id', authorize(), getPrestataire);
 router.post('/soffre/', findOffre);
 router.post('/filter/', getFilter);
 router.put('/:id', authorize(), updateSchema, update);
@@ -44,6 +45,12 @@ function add(req, res, next) {
 function getFichiers(req, res, next) {
     offreService.getFichiers(req.params.id)
         .then(ams => res.json(ams))
+        .catch(next);
+}
+
+function getPrestataire(req, res, next) {
+    offreService.getPrestataire(req.params.id)
+        .then(offres => res.json(offres))
         .catch(next);
 }
 

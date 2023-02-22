@@ -12,6 +12,8 @@ router.get('/filterprix', filterPrix);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', getById);
 router.get('/fichiers/:id', authorize(), getFichiers);
+router.get('/prestataire/:id', authorize(), getPrestataire);
+router.get('/garage/:id', authorize(), getGarage);
 router.post('/soffre/', findOffre);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
@@ -48,6 +50,18 @@ function add(req, res, next) {
 
 function getFichiers(req, res, next) {
     offreService.getFichiers(req.params.id)
+        .then(offres => res.json(offres))
+        .catch(next);
+}
+
+function getPrestataire(req, res, next) {
+    offreService.getPrestataire(req.params.id)
+        .then(offres => res.json(offres))
+        .catch(next);
+}
+
+function getGarage(req, res, next) {
+    offreService.getGarage(req.params.id)
         .then(offres => res.json(offres))
         .catch(next);
 }

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-module.exports = Prestataire;
+module.exports = Prestataire_Dmd;
 
-function Prestataire(sequelize) {
+function Prestataire_Dmd(sequelize) {
     const attributes = {
         nom_prestataire: { type: DataTypes.STRING, allowNull: false },
         prenom_prestataire: { type: DataTypes.STRING, allowNull: false },
@@ -32,5 +32,5 @@ function Prestataire(sequelize) {
         }
     };
 
-    return sequelize.define('Prestataire', attributes, options);
+    return sequelize.define('Prestataire_Dmd', attributes, options);
 }

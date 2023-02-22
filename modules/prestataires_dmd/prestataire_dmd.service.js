@@ -9,7 +9,7 @@ module.exports = {
     getById,
     create,
     update,
-    updateMdp,
+    //updateMdp,
     getPrestataireByEmail,
     delete: _delete
 };

@@ -14,9 +14,42 @@ module.exports = {
     getAvant,
     getBest,
     getFilter,
+    getPrestataire,
     delete: _delete
 };
 
+
+async function getAll() {
+    offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+    }
+    console.log(res);
+    return res; 
+    }
+}
+
+async function getPrestataire(id) {
+    offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.prestataire_id == id)
+        {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+        }
+    }
+    console.log(res);
+    return res; 
+    }
+}
 
 async function getAll() {
     offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 

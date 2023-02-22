@@ -12,12 +12,43 @@ module.exports = {
     getFichiers,
     filterPrix,
     findOffre,
+    getPrestataire,
+    getGarage,
     delete: _delete
 };
 
 
 async function getAll() {
     offres = await db.Offre.findAll(); 
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+    }
+    console.log(res);
+    return res; 
+    }
+}
+
+async function getPrestataire(id) {
+    offres = await db.Offre.findAll({ where: { prestataire_id: id }, raw: true }); 
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+    }
+    console.log(res);
+    return res; 
+    }
+}
+
+async function getGarage(id) {
+    const garage = await db.Garage.findOne({ where: { prestataire_id: id }, raw: true });
+    offres = await db.Offre.findAll({ where: { prestataire_id: garage.prestataire_id }, raw: true }); 
     var ofs = JSON.parse(JSON.stringify(offres));
     var res = [];
     if (ofs.length) {
@@ -143,8 +174,7 @@ async function findOffre(params) {
     if (params)
     {
         const offre = await db.Offre.findAll({ where: { [Op.and] : [
-           { date_debut: {[Op.like]: params.date_debut + '%'} },
-           { date_fin: {[Op.like]: params.date_fin + '%'} }
+           { titre_offre: {[Op.like]: params.titre_offre + '%'} },
         ]}});
         if (!offre) {throw 'Vide' }
         else return await offre;
