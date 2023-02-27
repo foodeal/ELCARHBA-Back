@@ -90,11 +90,12 @@ async function getById(id) {
 }
 
 async function create(params) {
-    const am = await db.Offre.create(params.body);
-
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
+    params.body.prestataire_id = decoded.sub;
+    const am = await db.Offre.create(params.body);
+
     params.date = Date.now();
     params.utilisateur = decoded.sub;
     params.mod = "Offre";

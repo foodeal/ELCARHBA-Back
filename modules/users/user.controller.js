@@ -70,7 +70,9 @@ function getUserByEmail(req, res, next) {
 }
 
 function getCurrent(req, res, next) {
-    res.json(req.user);
+    userService.currentUser(req)
+    .then(user => res.json(user))
+    .catch(next);
 }
 
 function getById(req, res, next) {

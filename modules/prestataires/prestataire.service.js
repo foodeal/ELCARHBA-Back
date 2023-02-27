@@ -10,10 +10,20 @@ module.exports = {
     getById,
     create,
     update,
+    currentPrestatire,
     updateMdp,
     getPrestataireByEmail,
     delete: _delete
 };
+
+async function currentPrestatire(params) {
+    console.log("Current");
+    const userToken = params.headers.authorization;
+    const token = userToken.split(' ');
+    const decoded = jwt.verify(token[1], 'Foodealz')
+    const user = await db.Prestataire.scope('withHash').findOne({ where: { id : decoded.sub } });
+    return user ;
+}
 
 async function authenticate({ email, motdepasse }) {
     const email_prestataire = email;

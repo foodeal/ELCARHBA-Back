@@ -12,9 +12,20 @@ module.exports = {
     create,
     update,
     updateMdp,
+    currentUser,
     getUserByEmail,
     delete: _delete
 };
+
+
+async function currentUser(params) {
+    console.log("Current");
+    const userToken = params.headers.authorization;
+    const token = userToken.split(' ');
+    const decoded = jwt.verify(token[1], 'Foodealz')
+    const user = await db.User.scope('withHash').findOne({ where: { id : decoded.sub } });
+    return user ;
+}
 
 async function authenticate({ email, motdepasse }) {
     const user = await db.User.scope('withHash').findOne({ where: { email } });
