@@ -89,27 +89,13 @@ async function getAvant() {
 
 
 async function getBest() {
-    const offres = await db.Offre_Dispo.findAll();
-
-
+    const offres = await db.Offre_Dispo.findAll({ order: [['nombre_offres', 'DESC']], limit: 5 }); 
     var ofs = JSON.parse(JSON.stringify(offres));
-    var nb =0 ;
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        const coupons = await db.Coupon.findAll({ where: { offre_id: ofs[i].id }, raw: true } );
-        var cps = JSON.parse(JSON.stringify(coupons));
-        for (let j=0; j < cps.length; j++) {
-            const coupons_hist = await db.Coupon_Historique.findAll({ where: { coupon_id: cps[i].id }, raw: true } );  
-            var nbcoupons = coupons_hist.length;
-            if (nbcoupons > nb) { 
-                console.log(nbcoupons);
-                console.log(ofs[i]);
-                nb = nbcoupons; 
-                const ofsf = await getData(ofs[i]);
-                res = res.concat(ofsf);
-            }
-        }
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
     }
     console.log(res);
     return res; 

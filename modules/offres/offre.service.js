@@ -14,8 +14,31 @@ module.exports = {
     findOffre,
     getPrestataire,
     getGarage,
+    createFull,
     delete: _delete
 };
+
+async function createFull(params) {
+    const userToken = params.headers.authorization;
+    const token = userToken.split(' ');
+    const decoded = jwt.verify(token[1], 'Foodealz')
+    params.body.prestataire_id = decoded.sub;
+    const am = await db.Offre.create(params.body);
+    params.body.offre_id = am.id;
+    const am2 = await db.Offre_Dispo.create(params.body)
+    let b = {
+        offre : am,
+        offre_dispo : am2
+    }
+
+    params.date = Date.now();
+    params.utilisateur = decoded.sub;
+    params.mod = "Offre";
+    params.msg = "Ajout de Offre ID : " + am.id;
+    await db.Log.create(params);
+
+    return b;
+}
 
 
 async function getAll() {

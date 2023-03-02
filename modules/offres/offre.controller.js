@@ -6,6 +6,7 @@ const authorize = require('./../../middleware/authorize')
 const offreService = require('./offre.service');
 
 // routes
+router.post('/fulladd',authorize(), fulladdSchema, fulladd);
 router.post('/add',authorize(), addSchema, add);
 router.get('/', getAll);
 router.get('/filterprix', filterPrix);
@@ -20,6 +21,40 @@ router.delete('/:id', authorize(), _delete);
 
 module.exports = router;
 
+
+function fulladdSchema(req, res, next) {
+    const schema = Joi.object({
+        titre_offre: Joi.string(),
+        conditions_utilisation: Joi.string(),
+        quantite: Joi.number(),
+        description: Joi.string(),
+        prix_initial: Joi.number(),
+        pourcentage_prix_initial: Joi.number(),
+        prix_remise: Joi.number(),
+        prestataire_id: Joi.number(),
+        statut: Joi.string(),
+        categorie: Joi.string(),
+        motorisation: Joi.string(),
+        diametre: Joi.string(),
+        type_huile: Joi.string(),
+        marque: Joi.string(),
+        modele: Joi.string(),
+        date_debut: Joi.date().required(),
+        date_fin: Joi.date().required(),
+        quantite_dispo: Joi.number(),
+        nombre_offres: Joi.number(),
+        statut_dispo: Joi.string(),
+        offre_id: Joi.number(),
+        offre_expired: Joi.boolean()
+    });
+    validateRequest(req, next, schema);
+}
+
+function fulladd(req, res, next) {
+    offreService.createFull(req)
+        .then(offre => res.json(offre))
+        .catch(next);
+}
 
 function addSchema(req, res, next) {
     const schema = Joi.object({
