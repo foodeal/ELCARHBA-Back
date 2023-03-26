@@ -7,7 +7,7 @@ const expertService = require('./expert.service');
 
 // routes
 router.post('/add',authorize(), addSchema, add);
-router.get('/', authorize(), getAll);
+router.get('/', getAll);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.post('/sexpert/', authorize(), findExpert);
@@ -19,7 +19,7 @@ module.exports = router;
 
 function addSchema(req, res, next) {
     const schema = Joi.object({
-        nom_précom_expert: Joi.string(),
+        nom_prenom_expert: Joi.string(),
         mail_expert: Joi.string().email(),   
         telephone_expert: Joi.string(),
         domaine_expert: Joi.string()
@@ -51,7 +51,7 @@ function getById(req, res, next) {
 
 function updateSchema(req, res, next) {
     const schema = Joi.object({
-        nom_précom_expert: Joi.string(),
+        nom_prenom_expert: Joi.string(),
         mail_expert: Joi.string().email(),   
         telephone_expert: Joi.string(),
         domaine_expert: Joi.string()

@@ -9,12 +9,15 @@ const offreService = require('./offred.service');
 router.post('/add',authorize(), addSchema, add);
 router.get('/', getAll);
 router.get('/best', getBest);
+router.get('/expired', getExpired);
+router.post('/sort', getSort);
 router.get('/avant', getAvant);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', getById);
 router.get('/:categorie', getByCategorie);
 router.get('/fichiers/:id', authorize(), getFichiers);
 router.get('/prestataire/:id', authorize(), getPrestataire);
+router.get('/prestataire/pagination/:id', authorize(), getPaginationPrestataire);
 router.post('/soffre/', findOffre);
 router.post('/filter/', getFilter);
 router.put('/:id', authorize(), updateSchema, update);
@@ -49,6 +52,12 @@ function getFichiers(req, res, next) {
 }
 
 function getPrestataire(req, res, next) {
+    offreService.getPrestataire(req.params.id)
+        .then(offres => res.json(offres))
+        .catch(next);
+}
+
+function getPaginationPrestataire(req, res, next) {
     offreService.getPrestataire(req.params.id)
         .then(offres => res.json(offres))
         .catch(next);
@@ -90,6 +99,18 @@ function getByCategorie(req, res, next) {
 
 function getFilter(req, res, next) {
     offreService.getFilter(req.body)
+        .then(am => res.json(am))
+        .catch(next);
+}
+
+function getExpired(req, res, next) {
+    offreService.getExpired()
+        .then(ams => res.json(ams))
+        .catch(next);
+}
+
+function getSort(req, res, next) {
+    offreService.getSort(req.body)
         .then(am => res.json(am))
         .catch(next);
 }

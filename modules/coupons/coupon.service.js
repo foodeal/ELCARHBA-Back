@@ -192,13 +192,15 @@ async function _delete(params) {
 
 // helper functions
 async function getDataCoupon(off) {
-    console.log(off.id);
+    console.log(off);
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
+    const user = await db.User.findOne({ where: { id: off.user_id }, raw: true });
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
     const prestataire = await db.Prestataire.findOne({ where: { id: off.prestataire_id }, raw: true });
     let b = {
+        'user': user,
         'offre_dispo': offre_dispo,
         'offre': offre,
         'files': file,
