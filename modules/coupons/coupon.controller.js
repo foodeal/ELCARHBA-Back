@@ -14,6 +14,7 @@ router.get('/:id', authorize(), getById);
 router.get('/expire/:id', authorize(), getExpired);
 router.get('/valide/:id', authorize(), getValide);
 router.post('/scoupon/', authorize(), findCoupon);
+router.post('/serie', authorize(), serieCoupon);
 router.post('/dcrypt/', authorize(), dcryptCode);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
@@ -107,6 +108,12 @@ function _delete(req, res, next) {
 
 function findCoupon(req, res, next) {
     couponService.findCoupon(req.body)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function serieCoupon(req, res, next) {
+    couponService.serieCoupon(req.body)
         .then(coupon => res.json(coupon))
         .catch(next);
 }

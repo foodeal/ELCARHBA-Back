@@ -18,6 +18,7 @@ module.exports = {
     getData,
     getDataCoupon,
     dcryptCode,
+    serieCoupon,
     delete: _delete
 };
 
@@ -92,7 +93,8 @@ async function getExpired(id) {
 async function getValide(id) {
     coupons = await db.Coupon.findAll({ where: { [Op.and] : [
         { user_id: id },
-        { coupon_valide: true}
+        { coupon_valide: true},
+        { coupon_expire : false}
     ]}});
     var cps = JSON.parse(JSON.stringify(coupons));
     var res = [];
@@ -114,6 +116,7 @@ async function create(params) {
     var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
     params.body.code_coupon = codeCryp;
     params.body.serie_coupon = serie;
+    await db.Reservation.create(params.body);
     console.log(params.body.code_coupon);
     const coupon = await db.Coupon.create(params.body);
     const couponData = await getDataCoupon(coupon.get());
@@ -125,6 +128,7 @@ async function create(params) {
     params.mod = "Coupon";
     params.msg = "Ajout de Coupon ID : " + coupon.id;
     await db.Log.create(params);
+    
 
     return await omitHash(couponData);
 }
@@ -217,6 +221,21 @@ async function getCoupon(id) {
     return getDataCoupon(coupon);
 }
 
+async function serieCoupon(params) {
+    console.log("ICI")
+    console.log("Params : " + params)
+    if (params)
+    {
+        const coupon = await db.Coupon.findOne({ where: { serie_coupon: params.serie_coupon  }});
+        console.log(coupon);
+        if (!coupon) {throw 'Vide' }
+        else {
+          const couponData = await getDataCoupon(coupon.get());
+          return couponData;
+        }
+    } 
+    else { throw 'Vide' ;}
+}
 
 async function findCoupon(params) {
     if (params)
@@ -240,16 +259,17 @@ const schedule = require('node-schedule');
 
 var d = (new Date(new Date().getTime())).toISOString();
 const job = schedule.scheduleJob('1 0 * * *', async function(){
-    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
+    const coupons = await db.Coupon.findAll({ where: { [Op.and] : [
         { date_valide_coupon : {[Op.lt]: d } },
         { coupon_expire : false}
     ]}});
-    var ofs = JSON.parse(JSON.stringify(coupon));
+    var ofs = JSON.parse(JSON.stringify(coupons));
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
         console.log(ofs[i]);
         ofs[i].coupon_expire = true;
+        ofs[i].coupon_valide = false;
         console.log(ofs[i]);
         const coupon = await getCoupon(ofs[i].id);
         Object.assign(coupon, ofs[i]);
