@@ -1,10 +1,9 @@
 ﻿{
     "database": {
-        "host": "localhost",
-        "port": 3306,
-        "user": "root",
-        "password": "n7N)bSa)1ckkM6zZ",
-        "database": "elkarhbadb"
+        "host": "aws.connect.psdb.cloud",
+        "username": "lskmcdivnvz58a0tvsre",
+        "password": "pscale_pw_FuI95EOTe4KGeQCUht4CTWogTPoCW6L1KYlr4EJbfJj",
+        "database": "karhba"
     },
     "secret": "Foodealz"
 }
