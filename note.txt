@@ -8,3 +8,15 @@
     },
     "secret": "Foodealz"
 }
+
+    "database": {
+        "host": "aws.connect.psdb.cloud",
+        "username": "lskmcdivnvz58a0tvsre",
+        "port": 3306,
+        "password": "pscale_pw_FuI95EOTe4KGeQCUht4CTWogTPoCW6L1KYlr4EJbfJj",
+        "database": "karhba",
+        "sslaccept": "strict"
+    },
+
+
+vK_bU2GgOwXHE6f7Y54OwA

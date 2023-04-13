@@ -8,6 +8,8 @@
         "start:dev": "nodemon ./server.js"
     },
     "dependencies": {
+        "@netlify/planetscale": "^1.0.0",
+        "@planetscale/database": "^1.7.0",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.2",
         "cloudflare": "^0.0.8",
