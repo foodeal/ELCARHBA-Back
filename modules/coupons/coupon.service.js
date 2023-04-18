@@ -114,6 +114,9 @@ async function create(params) {
     serie = "CO" + (nb + 1);
     // Encrypt
     var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
+    const pt = await addPoint(params.body);
+    params.body.coupon_valide = true;
+    params.body.coupon_expire = false;
     params.body.code_coupon = codeCryp;
     params.body.serie_coupon = serie;
     await db.Reservation.create(params.body);
@@ -131,6 +134,22 @@ async function create(params) {
     
 
     return await omitHash(couponData);
+}
+
+async function addPoint(params) {
+    const offre = await db.Offre.findOne({ where: { id: params.offre_id }, raw: true });
+    const user = await db.User.findOne({ where: { id: params.user_id }, raw: true });
+    if (offre.prix_initial < 51) {
+        user.pointgagner = user.pointgagner + 2;
+    } else if (offre.prix_initial < 151) {
+        user.pointgagner = user.pointgagner + 5;
+    } else if (offre.prix_initial < 301) {
+        user.pointgagner = user.pointgagner + 10;
+    } else {
+        user.pointgagner = user.pointgagner + 15;
+    }
+    Object.assign(user, user);
+    await user.save();
 }
 
 async function dcryptCode(params) {

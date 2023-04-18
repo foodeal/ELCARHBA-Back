@@ -13,6 +13,7 @@ module.exports = {
     currentPrestatire,
     updateMdp,
     getPrestataireByEmail,
+    findPrestataire,
     delete: _delete
 };
 
@@ -147,6 +148,20 @@ async function updateMdp(params) {
         }
     });
 }
+}
+
+async function findPrestataire(params) {
+    if (params.prestataire) 
+    {
+        console.log(params);
+        var pres = await db.Prestataire.findAll({ where: { [Op.or] : [
+           { nom_prestataire: {[Op.like]: params.prestataire + '%'} },
+           { prenom_prestataire: {[Op.like]: params.prestataire + '%'} }
+        ]}});
+    } else {
+       var pres = await db.Prestataire.findAll(); 
+    }
+        return pres;
 }
 
 function omitHash(prestataire) {

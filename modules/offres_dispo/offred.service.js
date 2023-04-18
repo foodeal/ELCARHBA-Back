@@ -387,18 +387,18 @@ async function findOffre(params) {
 
 
 async function getFilter(params) {
-    const allOffres = await db.Offre_Dispo.findAll();
+    var allOffres = await db.Offre_Dispo.findAll();
     if (params)
     {
         if (params.categorie) {
-        const offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
-           { categorie: params.categories  },
+        var offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
+           { categorie: params.categorie  },
         //    { date_fin: {[Op.like]: params.date_fin + '%'} }
         ]}});
         }  
-        if (params.categorie) {
-        const offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
-            { categorie: params.categories  },
+        if (params.motorisation) {
+        var offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
+            { motorisation: params.motorisation  },
             //    { date_fin: {[Op.like]: params.date_fin + '%'} }
         ]}});
         }  

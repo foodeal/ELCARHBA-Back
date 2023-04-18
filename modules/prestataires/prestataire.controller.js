@@ -15,6 +15,7 @@ router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
+router.post('/spres/', findPrestataire);
 
 module.exports = router;
 
@@ -129,3 +130,10 @@ function _delete(req, res, next) {
         .then(() => res.json({ message: 'Sup' }))
         .catch(next);
 }
+
+function findPrestataire(req, res, next) {
+    prestataireService.findPrestataire(req.body)
+        .then(prestataire => res.json(prestataire))
+        .catch(next);
+}
+

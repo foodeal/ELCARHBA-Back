@@ -18,6 +18,7 @@ Log = require('../logs/log.model');
 Offre = require('../modules/offres/offre.model');
 Offre_Dispo = require('../modules/offres_dispo/offred.model');
 Carnet = require('../modules/carnets/carnet.model');
+Avis = require('../modules/avis/avis.model');
 
 module.exports = db = {};
 
@@ -50,6 +51,7 @@ async function initialize() {
     db.Coupon = require('../modules/coupons/coupon.model')(sequelize);
     db.Coupon_Historique = require('../modules/coupons_historiques/couponh.model')(sequelize);
     db.Carnet = require('../modules/carnets/carnet.model')(sequelize);
+    db.Avis = require('../modules/avis/avis.model')(sequelize);
     db.Expert = require('../modules/experts/expert.model')(sequelize);
     
     // Association ManyToMany
