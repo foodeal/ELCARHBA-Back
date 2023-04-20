@@ -11,7 +11,7 @@ module.exports = {
 
 
 async function getAll() {
-    return await db.Analyse_Matiere.findAll();
+    return await db.Log.findAll();
 }
 
 async function getById(id) {
@@ -19,7 +19,7 @@ async function getById(id) {
 }
 
 async function create(params) {
-    const l = await db.Analyse_Matiere.create(params);
+    const l = await db.Log.create(params);
     const content = "Log : " + params.date + " " + params.user;
     console.log(content);
     fs.appendFile('/logs/logs/logs.txt', content, (err) => {
@@ -51,7 +51,7 @@ async function _delete(id) {
 // helper functions
 
 async function getL(id) {
-    const l = await db.Analyse_Matiere.findByPk(id);
+    const l = await db.Log.findByPk(id);
     if (!l) throw 'Pas de Matiere';
     return l;
 }
