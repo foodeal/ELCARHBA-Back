@@ -1,6 +1,6 @@
 ﻿const jwt = require('jsonwebtoken');
 const db = require('../../helpers/db');
-const Sequelize = require("sequelize");
+var Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 
@@ -187,12 +187,24 @@ async function getData(off) {
     const offre = await db.Offre.findOne({ where: { id: off.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+        const avis_count = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('count', Sequelize.col('id')), 'count']],
+        raw: true 
+    });
+    const avis_sum = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('sum', Sequelize.col('id')), 'sum']],
+        raw: true 
+    });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     let b = {
         'offre': offre,
         'files': file,
         'garage': garage,
-        'prestataire': prestataire
+        'prestataire': prestataire,
+        'avis_count': avis_count,
+        'avis_sum': avis_sum
     }
     off = Object.assign(off, b);
     return (off)
@@ -205,12 +217,24 @@ async function getById(id) {
     const offre = await db.Offre.findOne({ where: { id: dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: dispo.offre_id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const avis_count = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('count', Sequelize.col('id')), 'count']],
+        raw: true 
+    });
+    const avis_sum = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('sum', Sequelize.col('id')), 'sum']],
+        raw: true 
+    });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     let b = {
         'offre': offre,
         'files': file,
         'garage': garage,
-        'prestataire': prestataire
+        'prestataire': prestataire,
+        'avis_count': avis_count,
+        'avis_sum': avis_sum
     }
     dispo = Object.assign(dispo, b);
     return (dispo);
@@ -391,21 +415,54 @@ async function getFilter(params) {
     if (params)
     {
         if (params.categorie) {
-        var offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
-           { categorie: params.categorie  },
-        //    { date_fin: {[Op.like]: params.date_fin + '%'} }
+        console.log(params);
+        const offre = await db.Offre.findAll({ where: { [Op.or] : [
+           { categorie: {[Op.or]: params.categorie } },
         ]}});
+        if (offre) {
+        var ofsf = JSON.parse(JSON.stringify(offre));
+        var res = [];
+        if (ofsf.length) {
+        for (let j=0; j < ofsf.length; j++) {
+            const offres = await db.Offre_Dispo.findAll({ where: { offre_id: ofsf[j].id }, raw: true });
+            var ofs = JSON.parse(JSON.stringify(offres));
+            console.log(ofs.length)
+            if (ofs.length) {
+            for (let i=0; i < ofs.length; i++) {
+                const ofsf = await getData(ofs[i]);
+                console.log("res : " + res);
+                res = res.concat(ofsf);
+            }            
+        }}   
+        }}
         }  
         if (params.motorisation) {
-        var offre = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
-            { motorisation: params.motorisation  },
-            //    { date_fin: {[Op.like]: params.date_fin + '%'} }
-        ]}});
+            console.log(params);
+            const offre = await db.Offre.findAll({ where: { [Op.or] : [
+               { motorisation: {[Op.like]: params.motorisation + '%'} },
+            ]}});
+            if (offre) {
+            var ofsf = JSON.parse(JSON.stringify(offre));
+            var res = [];
+            if (ofsf.length) {
+            for (let j=0; j < ofsf.length; j++) {
+                const offres = await db.Offre_Dispo.findAll({ where: { offre_id: ofsf[j].id }, raw: true });
+                var ofs = JSON.parse(JSON.stringify(offres));
+                console.log(ofs.length)
+                if (ofs.length) {
+                for (let i=0; i < ofs.length; i++) {
+                    const ofsf = await getData(ofs[i]);
+                    console.log("res : " + res);
+                    res = res.concat(ofsf);
+                }            
+            }}   
+            }}
         }  
-        if (!offre) {throw 'Vide' }
-        else return await offre;
+        if (!res) 
+        {throw 'Vide' }
+        else return await res;
     } else 
-    { throw 'Vide' ;}
+    { return allOffres;}
 }
 
 

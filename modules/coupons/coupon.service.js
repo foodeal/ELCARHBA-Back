@@ -1,6 +1,6 @@
 ﻿const jwt = require('jsonwebtoken');
 const db = require('../../helpers/db');
-const Sequelize = require("sequelize");
+var Sequelize = require("sequelize");
 const bcrypt = require('bcryptjs');
 const Op = Sequelize.Op;
 var CryptoJS = require("crypto-js");
@@ -122,6 +122,8 @@ async function create(params) {
     await db.Reservation.create(params.body);
     console.log(params.body.code_coupon);
     const coupon = await db.Coupon.create(params.body);
+    params.body.coupon_id = coupon.id;
+    await db.Coupon_Historique.create(params.body);
     const couponData = await getDataCoupon(coupon.get());
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
@@ -137,8 +139,8 @@ async function create(params) {
 }
 
 async function addPoint(params) {
+    const user = await db.User.findByPk(params.user_id);
     const offre = await db.Offre.findOne({ where: { id: params.offre_id }, raw: true });
-    const user = await db.User.findOne({ where: { id: params.user_id }, raw: true });
     if (offre.prix_initial < 51) {
         user.pointgagner = user.pointgagner + 2;
     } else if (offre.prix_initial < 151) {
@@ -150,6 +152,7 @@ async function addPoint(params) {
     }
     Object.assign(user, user);
     await user.save();
+    return omitHash(user.get());
 }
 
 async function dcryptCode(params) {
@@ -221,6 +224,16 @@ async function getDataCoupon(off) {
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
+    const avis_count = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('count', Sequelize.col('id')), 'count']],
+        raw: true 
+    });
+    const avis_sum = await db.Avis.findOne({ 
+        where: { garage_id: await garage.id }, 
+        attributes: ['id', [Sequelize.fn('sum', Sequelize.col('id')), 'sum']],
+        raw: true 
+    });
     const prestataire = await db.Prestataire.findOne({ where: { id: off.prestataire_id }, raw: true });
     let b = {
         'user': user,
@@ -228,7 +241,9 @@ async function getDataCoupon(off) {
         'offre': offre,
         'files': file,
         'garage': garage,
-        'prestataire': prestataire
+        'prestataire': prestataire,
+        'avis_count': avis_count,
+        'avis_sum': avis_sum
     }
     off = Object.assign(off, b);
     return (off)
