@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../../helpers/db');
 var nodemailer = require('nodemailer');
+var Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 module.exports = {
     authenticate,
@@ -151,6 +153,7 @@ async function updateMdp(params) {
 }
 
 async function findPrestataire(params) {
+    var pres = await db.Prestataire.findAll();
     if (params.prestataire) 
     {
         console.log(params);
@@ -158,7 +161,9 @@ async function findPrestataire(params) {
            { nom_prestataire: {[Op.like]: params.prestataire + '%'} },
            { prenom_prestataire: {[Op.like]: params.prestataire + '%'} }
         ]}});
-    } else {
+        console.log(pres.length);
+    } 
+    if (pres.length == 0) {
        var pres = await db.Prestataire.findAll(); 
     }
         return pres;
