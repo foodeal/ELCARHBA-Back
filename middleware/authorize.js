@@ -1,4 +1,5 @@
-const jwt = require('express-jwt');
+// var { expressjwt: jwt } = require("express-jwt");
+const jwt = require('express-jwt')
 const { secret } = require('./../config.json');
 const db = require('./../helpers/db');
 
