@@ -27,6 +27,7 @@ function addSchema(req, res, next) {
     const schema = Joi.object({
         offre: Joi.number(),
         autre: Joi.number(),
+        name: Joi.string(),
         path: Joi.string(),
         url: Joi.string().required(),
         type: Joi.string()
@@ -60,6 +61,7 @@ function updateSchema(req, res, next) {
     const schema = Joi.object({
         offre: Joi.number().empty(),
         autre: Joi.number().empty(),
+        name: Joi.string(),
         path: Joi.string(),
         url: Joi.string().empty(),
         type: Joi.string().empty()
@@ -166,12 +168,25 @@ var minioClient = new Minio.Client({
   })
 
 
-router.post('/uploadminio', authorize(), Multer({dest: "./fichiers/files"}).single("file"), function(req, res) {
+router.post('/uploadminio', Multer({dest: "./fichiers/files"}).single("file"), function(req, res) {
     console.log(req.file);
     minioClient.putObject("test", req.file.originalname, req.file.path, function(error, etag) {
         if(error) {
             return console.log(error);
         }
+        req.body.path = req.file.path;
+        req.body.name = req.file.originalname;
+        req.body.type = req.file.originalname.substr(req.file.originalname.lastIndexOf('.') + 1);
+        fService.create(req.body);
         res.send(req.file);
     });
  });
+
+router.get("/downloadminio", function(req, res) {
+    minioClient.getObject("test", req.query.filename, function(error, stream) {
+        if(error) {
+            return res.status(500).send(error);
+        }
+        stream.pipe(res);
+    });
+});

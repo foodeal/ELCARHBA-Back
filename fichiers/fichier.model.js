@@ -5,6 +5,7 @@ function Fichier(sequelize) {
     const attributes = {
         offre: { type: DataTypes.INTEGER, allowNull: true, constraint: false },
         autre: { type: DataTypes.INTEGER, allowNull: true, constraint: false },
+        name: { type: DataTypes.STRING, allowNull: true },
         path: { type: DataTypes.STRING, allowNull: true },
         url: { type: DataTypes.STRING, allowNull: true },
         type: { type: DataTypes.STRING, allowNull: true }
