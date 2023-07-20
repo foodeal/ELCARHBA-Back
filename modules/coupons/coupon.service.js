@@ -218,7 +218,7 @@ async function _delete(params) {
 
 // helper functions
 async function getDataCoupon(off) {
-    console.log(off);
+    console.log(off.code_coupon);
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
     const user = await db.User.findOne({ where: { id: off.user_id }, raw: true });
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });

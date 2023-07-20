@@ -5,7 +5,11 @@ const validateRequest = require('./../middleware/validate-request');
 const authorize = require('./../middleware/authorize');
 const fService = require('./fichier.service');
 const formidable = require('formidable');
-
+var Minio = require('minio');
+var Multer = require("multer");
+var BodyParser = require("body-parser");
+var fs = require('fs');
+var path = require('path');
 
 // routes
 router.post('/add', addSchema, add);
@@ -150,3 +154,24 @@ const form = formidable({
     } 
 });
  
+
+
+// Minio
+var minioClient = new Minio.Client({
+    endPoint: 'play.min.io',
+    port: 9000,
+    useSSL: true,
+    accessKey: 'GYE0SqDnnmWzyd4Ptdok',
+    secretKey: 'ZxaZ1GrC8MDJTp6nN3adHCFGWxawvhKwz3e8biA5',
+  })
+
+
+router.post('/uploadminio', authorize(), Multer({dest: "./fichiers/files"}).single("file"), function(req, res) {
+    console.log(req.file);
+    minioClient.putObject("test", req.file.originalname, req.file.path, function(error, etag) {
+        if(error) {
+            return console.log(error);
+        }
+        res.send(req.file);
+    });
+ });

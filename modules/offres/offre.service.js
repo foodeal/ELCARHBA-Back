@@ -22,6 +22,7 @@ async function createFull(params) {
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
+    params.body.offre_expired = false;
     params.body.prestataire_id = decoded.sub;
     const am = await db.Offre.create(params.body);
     params.body.offre_id = am.id;

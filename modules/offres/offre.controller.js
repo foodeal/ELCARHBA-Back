@@ -44,8 +44,8 @@ function fulladdSchema(req, res, next) {
         quantite_dispo: Joi.number(),
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
-        offre_id: Joi.number(),
-        offre_expired: Joi.boolean()
+        offre_id: Joi.number()
+        // offre_expired: Joi.boolean().default(false)
     });
     validateRequest(req, next, schema);
 }

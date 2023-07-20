@@ -18,7 +18,7 @@ function Coupon(sequelize) {
     const options = {
         defaultScope: {
             // exclude hash by default
-            attributes: { exclude: ['code_coupon'] }
+            attributes: { exclude: [] }
         },
         scopes: {
             // include hash with this scope

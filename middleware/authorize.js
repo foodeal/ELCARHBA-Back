@@ -13,6 +13,7 @@ function authorize() {
         // attach full user record to request object
         async (req, res, next) => {
             // get user with id from token 'sub' (subject) property
+            // const user = await db.User.findByPk(req.auth.sub);
             const user = await db.User.findByPk(req.user.sub);
 
             // check user still exists
