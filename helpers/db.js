@@ -7,6 +7,7 @@ User_Favori = require('../modules/users_favoris/userf.model');
 Prestataire = require('../modules/prestataires/prestataire.model');
 Prestataire_Dmd = require('../modules/prestataires_dmd/prestataire_dmd.model');
 Garage = require('../modules/garages/garage.model');
+Publicite = require('../modules/publicites/publicite.model');
 Coupon = require('../modules/coupons/coupon.model');
 Coupon_Historique = require('../modules/coupons_historiques/couponh.model');
 Service = require('../modules/services/service.model');
@@ -41,6 +42,7 @@ async function initialize() {
     db.Fichier = require('../fichiers/fichier.model')(sequelize);
     db.Log = require('../logs/log.model')(sequelize);
     db.Offre = require('../modules/offres/offre.model')(sequelize);
+    db.Publicite = require('../modules/publicites/publicite.model')(sequelize);
     db.Offre_Dispo = require('../modules/offres_dispo/offred.model')(sequelize);
     db.Prestataire = require('../modules/prestataires/prestataire.model')(sequelize);
     db.Prestataire_Dmd = require('../modules/prestataires_dmd/prestataire_dmd.model')(sequelize);
@@ -55,7 +57,6 @@ async function initialize() {
     db.Expert = require('../modules/experts/expert.model')(sequelize);
     
     // Association ManyToMany
-
 
     // sync all models with database
     await sequelize.sync();

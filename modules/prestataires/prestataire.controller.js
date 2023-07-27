@@ -53,7 +53,14 @@ function registerSchema(req, res, next) {
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
         motdepasse: Joi.string().min(6),
-        categorie: Joi.string()
+        categorie: Joi.string(),
+        nom_garage: Joi.string().required(),
+        heures_travail: Joi.string(),
+        jours_travail: Joi.string(),
+        adresse_garage: Joi.string(),
+        contact_garage: Joi.string(),
+        type_garage: Joi.string(),
+        prestataire_id: Joi.number()
     });
     validateRequest(req, next, schema);
 }

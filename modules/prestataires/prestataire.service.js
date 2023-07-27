@@ -50,6 +50,7 @@ async function getById(id) {
 }
 
 async function create(params) {
+    console.log(params);
     // validate
     if (await db.Prestataire.findOne({ where: { email_prestataire: params.email_prestataire } })) {
         throw 'Email "' + params.email + '" existe déjà';
@@ -61,7 +62,9 @@ async function create(params) {
     }
 
     // save prestataire
-    await db.Prestataire.create(params);
+    const pres = await db.Prestataire.create(params);
+    params.prestataire_id = pres.id
+    const garage = await db.Garage.create(params);
 }
 
 async function update(id, params) {

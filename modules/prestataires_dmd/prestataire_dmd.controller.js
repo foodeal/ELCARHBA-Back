@@ -38,7 +38,13 @@ function registerSchema(req, res, next) {
         registre_commerce: Joi.string(),
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
-        categorie: Joi.string()
+        categorie: Joi.string(),
+        nom_garage: Joi.string().required(),
+        heures_travail: Joi.string(),
+        jours_travail: Joi.string(),
+        adresse_garage: Joi.string(),
+        contact_garage: Joi.string(),
+        type_garage: Joi.string()
     });
     validateRequest(req, next, schema);
 }
@@ -96,7 +102,13 @@ function updateSchema(req, res, next) {
         registre_commerce: Joi.string(),
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
-        categorie: Joi.string()
+        categorie: Joi.string(),
+        nom_garage: Joi.string().required(),
+        heures_travail: Joi.string(),
+        jours_travail: Joi.string(),
+        adresse_garage: Joi.string(),
+        contact_garage: Joi.string(),
+        type_garage: Joi.string()
     });
     validateRequest(req, next, schema);
 }

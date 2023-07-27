@@ -19,7 +19,13 @@ function Prestataire_Dmd(sequelize) {
         registre_commerce: { type: DataTypes.STRING, allowNull: true },
         cin_gerant: { type: DataTypes.STRING, allowNull: true },
         contrat_condition: { type: DataTypes.STRING, allowNull: true },
-        categorie: { type: DataTypes.STRING, allowNull: true }
+        categorie: { type: DataTypes.STRING, allowNull: true },
+        nom_garage: { type: DataTypes.STRING, allowNull: true },
+        heures_travail: { type: DataTypes.STRING, allowNull: true },
+        jours_travail: { type: DataTypes.STRING, allowNull: true },
+        adresse_garage: { type: DataTypes.STRING, allowNull: true },
+        contact_garage: { type: DataTypes.STRING, allowNull: true },
+        type_garage: { type: DataTypes.TEXT, allowNull: true }
     };
 
     const options = {

@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/images', express.static('images'));
 app.use('/users', require('./modules/users/user.controller'));
 app.use('/avis', require('./modules/avis/avis.controller'));
+app.use('/publicites', require('./modules/publicites/publicite.controller'));
 app.use('/users_favoris', require('./modules/users_favoris/userf.controller'));
 app.use('/prestataires', require('./modules/prestataires/prestataire.controller'));
 app.use('/coupons', require('./modules/coupons/coupon.controller'));

@@ -23,7 +23,11 @@ module.exports = {
 
 
 async function getAll() {
-    offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
+    offres = await db.Offre_Dispo.findAll({ 
+        where : { offre_expired: null}, 
+        raw: true,
+        order: [['date_debut', 'DESC']]
+    }); 
     var ofs = JSON.parse(JSON.stringify(offres));
     var res = [];
     if (ofs.length) {
@@ -72,19 +76,19 @@ async function getPrestataire(id) {
     }
 }
 
-async function getAll() {
-    offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
-    var ofs = JSON.parse(JSON.stringify(offres));
-    var res = [];
-    if (ofs.length) {
-    for (let i=0; i < ofs.length; i++) {
-        const ofsf = await getData(ofs[i]);
-        res = res.concat(ofsf);
-    }
-    console.log(res);
-    return res; 
-    }
-}
+// async function getAll() {
+//     offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
+//     var ofs = JSON.parse(JSON.stringify(offres));
+//     var res = [];
+//     if (ofs.length) {
+//     for (let i=0; i < ofs.length; i++) {
+//         const ofsf = await getData(ofs[i]);
+//         res = res.concat(ofsf);
+//     }
+//     console.log(res);
+//     return res; 
+//     }
+// }
 
 async function getAvant() {
     var today = (new Date(new Date().getTime())).toISOString();
