@@ -13,10 +13,10 @@ function authorize() {
         // attach full user record to request object
         async (req, res, next) => {
             // get user with id from token 'sub' (subject) property
-            // const user = await db.User.findByPk(req.auth.sub) ??
-            // await db.Prestataire.findByPk(req.auth.sub);
-            const user = await db.User.findByPk(req.user.sub) ??
-            await db.Prestataire.findByPk(req.user.sub);
+            const user = await db.User.findByPk(req.auth.sub) ??
+            await db.Prestataire.findByPk(req.auth.sub);
+            // const user = await db.User.findByPk(req.user.sub) ??
+            // await db.Prestataire.findByPk(req.user.sub);
             // check user still exists
             if (!user)
                 return res.status(401).json({ message: 'Interdit' });
