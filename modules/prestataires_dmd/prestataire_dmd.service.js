@@ -116,10 +116,10 @@ async function validatePrestataire(id) {
 
     var mailOptions = {
          from: 'test@solyntek.com',
-         to: 'Iskander.elamri@gmail.com',
+         to: pres.email_prestataire,
          subject: 'Changer Mot de Passe',
-         text: 'Bonjour Iskandddddder'
-        //  text: 'Bonjour '+ prestataire.nom_prestataire + ', votre mail est : ' + prestataire.email_prestataire +'et Mot de passe : '+ randomstring + '.'
+         text: 'Mot de passe ELCarhba',
+         html: `Bonjour `+ prestataire.nom_prestataire + `, votre mail est : ` + prestataire.email_prestataire + ` et Mot de passe : <h3>`+ randomstring + `</h3>.`
     };
 
      transporter.sendMail(mailOptions, function(error, info){

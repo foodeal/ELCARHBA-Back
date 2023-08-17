@@ -113,6 +113,7 @@ async function create(params) {
     code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
     nb = await db.Coupon.count();
     serie = "CO" + (nb + 1);
+    const user = await db.User.findByPk(params.body.user_id);
     // Encrypt
     var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
     const pt = await addPoint(params.body);
@@ -336,11 +337,10 @@ async function create(params) {
 
     var mailOptions = {
          from: 'test@solyntek.com',
-         to: 'ahmedabduelrahmen.haddad@esprit.tn',
+         to: user.email,
          subject: 'Votre Coupon',
          text: 'ElCarhba',
          html: html_data
-        //  text: 'Bonjour '+ prestataire.nom_prestataire + ', votre mail est : ' + prestataire.email_prestataire +'et Mot de passe : '+ randomstring + '.'
     };
 
      transporter.sendMail(mailOptions, function(error, info){
