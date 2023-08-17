@@ -57,5 +57,5 @@ async function base64_encode(file) {
 
 function omitHash(f) {
     const { hash, ...ficheWithoutHash } = f;
-    return iWithoutHash;
+    return ficheWithoutHash;
 }

@@ -8,7 +8,7 @@ const prestataireService = require('./prestataire_dmd.service');
 // routes
 router.post('/register', registerSchema, register);
 router.get('/email', getPrestataireByEmail);
-router.get('/validate', validatePrestataire);
+router.get('/validate/:id', authorize(), validatePrestataire);
 router.get('/', authorize(), getAll);
 router.get('/:categorie', getByCategorie);
 router.get('/current', authorize(), getCurrent);
@@ -120,8 +120,8 @@ function update(req, res, next) {
 }
 
 function validatePrestataire(req, res, next) {
-    prestataireService.validatePrestataire(req.body)
-        .then(() => res.json({ message: 'Succes' }))
+    prestataireService.validatePrestataire(req.params.id)
+        .then(prestataire => res.json(prestataire))
         .catch(next);
 }
 

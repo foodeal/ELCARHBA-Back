@@ -73,7 +73,7 @@ async function _delete(params) {
 // helper functions
 
 async function getReservation(id) {
-    const reservation = await db.Reservation_Historique.findByPk(id);
+    const reservation = await db.Reservation.findByPk(id);
     if (!reservation) throw 'Pas de reservation';
     return reservation;
 }
@@ -82,7 +82,7 @@ async function getReservation(id) {
 async function findReservation(params) {
     if (params)
     {
-        const reservation = await db.Reservation_Historique.findAll({ where: { [Op.and] : [
+        const reservation = await db.Reservation.findAll({ where: { [Op.and] : [
            { titre_reservation: {[Op.like]: params.date_debut + '%'} }
         ]}});
         if (!reservation) {throw 'Vide' }

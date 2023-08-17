@@ -3,7 +3,7 @@ module.exports = Reservation;
 
 function Reservation(sequelize) {
     const attributes = {
-        offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
+        offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offre_Dispos', key: 'id' } },
         user_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Users', key: 'id' } }
     };
 

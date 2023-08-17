@@ -11,6 +11,14 @@ var BodyParser = require("body-parser");
 var fs = require('fs');
 var path = require('path');
 
+// AWS
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+    region: 'de',
+    accessKeyId: 'f6920d3469784ad8af3f72472d89ae56',
+    secretAccessKey: '645c52c0f42f4de5bb3599eea1fb14da',
+    endpoint: "https://s3.de.io.cloud.ovh.net/"
+  });
 // routes
 router.post('/add', addSchema, add);
 router.get('/', authorize(), getAll);
@@ -81,9 +89,7 @@ function _delete(req, res, next) {
         .catch(next);
 }
 
-
-// UPLOAD
-// handle storage using multer + formidable
+// Handle files upload and donwload
 const isFileValid = (file) => {
     const type = file.type.split("/").pop();
     const validTypes = ["jpg", "jpeg", "png"];
@@ -91,7 +97,7 @@ const isFileValid = (file) => {
       return false;
     }
     return true;
-  };
+};
 
 const form = formidable({ 
     multiples: true, 
@@ -104,12 +110,48 @@ const form = formidable({
 });
 
 
- form.on('progress', (bytesReceived, bytesExpected) => {
+form.on('progress', (bytesReceived, bytesExpected) => {
     console.log("Progress: "+((bytesReceived*100)/bytesExpected));
-  });
+});
  
- // handle files upload
- router.post('/upload', authorize(), (req, res, next) => {
+// AWS Upload and Download
+router.post('/uploadaws', authorize(), Multer().single("file"), function(req, res) {
+    req.body.path = req.file.path;
+    req.body.name = req.file.originalname;
+    req.body.type = req.file.originalname.substr(req.file.originalname.lastIndexOf('.') + 1);
+    s3.upload({
+        Bucket: "elcarhba",
+        Key: req.file.originalname,
+        Body: req.file.buffer
+        }, (err, data) => {
+        if (err) {
+        console.error(err);
+        } else {
+        console.log(`File uploaded successfully. ${data.Location}`);
+        }
+    });
+    fService.create(req.body);
+    res.send(req.file);
+});
+
+router.post("/downloadaws", function(req, res) {
+    console.log(req.body);
+    s3.getObject({ Bucket: "elcarhba", Key: req.body.filename }, function(err, data)
+    {
+        if (err) {
+            res.status(200);
+            res.end('Error Fetching File');
+          }
+          else {
+            res.attachment(req.body.filename); // Set Filename
+            res.type(data.ContentType); // Set FileType
+            res.send(data.Body);        // Send File Buffer
+          }
+    });
+});
+
+// handle storage using multer + formidable
+router.post('/upload', authorize(), (req, res, next) => {
 
     form.parse(req, (err, fields, files) => {
         var i =0;
@@ -145,7 +187,7 @@ const form = formidable({
  });
 
 
- router.get('/download/:fiche/:analyse', async (req, res, next) => {
+router.post('/download/:fiche/:analyse', async (req, res, next) => {
     fichier = await fService.downloadFichiers(req.params.fiche, req.params.analyse)
     if (fichier != null) {
         console.log(fichier);
@@ -155,8 +197,6 @@ const form = formidable({
         res.download(filePath, fileName); 
     } 
 });
- 
-
 
 // Minio
 var minioClient = new Minio.Client({
@@ -182,7 +222,7 @@ router.post('/uploadminio', Multer({dest: "./fichiers/files"}).single("file"), f
     });
  });
 
-router.get("/downloadminio", function(req, res) {
+router.post("/downloadminio", function(req, res) {
     minioClient.getObject("test", req.query.filename, function(error, stream) {
         if(error) {
             return res.status(500).send(error);

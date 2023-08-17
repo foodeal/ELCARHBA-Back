@@ -9,6 +9,7 @@ module.exports = {
     getById,
     create,
     update,
+    validatePrestataire,
     //updateMdp,
     getPrestataireByEmail,
     delete: _delete
@@ -74,8 +75,9 @@ async function getPrestataireByEmail(params) {
 }
 
 
-async function validatePrestataire(params) {
-    const prestataire = await db.Prestataire.findOne({ where: { email_prestataire: params.email_prestataire } });
+async function validatePrestataire(id) {
+    const dmd = await db.Prestataire_Dmd.findByPk(id)
+    const prestataire = await db.Prestataire.findOne({ where: { email_prestataire: dmd.email_prestataire } });
     if (prestataire) throw 'Utilisateur exist';
     else {
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz"; 
@@ -88,27 +90,36 @@ async function validatePrestataire(params) {
             else { 
                 var rnum = Math.floor(Math.random() * chars.length); 
                 randomstring += chars.substring(rnum,rnum+1); 
-                charCount += 1; } }
+                charCount += 1; } 
+    }
 
+    var params = omitHash(dmd.get());
+    delete params.id;
     params.motdepasse = await bcrypt.hash(randomstring, 10);
-    await db.Prestataire.create(params);
+    const pres = await db.Prestataire.create(params);
+    console.log(pres.id);
+    params.prestataire_id = pres.id
+    const garage = await db.Garage.create(params);
+    console.log(params);
 
     var transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
+        name: 'elcarhba',
+        host: 'mail.solyntek.com',
+        port: 465,
+        secure: true,
         requireTLS: true,
          auth: {
-         prestataire: 'lesvergersapp@gmail.com',
-         pass: 'lesvergers'
+         user: 'test@solyntek.com',
+         pass: 'o?zL6-o$e21!'
     }
     });
 
     var mailOptions = {
-         from: 'lesvergersapp@gmail.com',
-         to: prestataire.email_prestataire,
+         from: 'test@solyntek.com',
+         to: 'Iskander.elamri@gmail.com',
          subject: 'Changer Mot de Passe',
-         text: 'Bonjour '+ prestataire.nom_prestataire + ', votre mail est : ' + prestataire.email_prestataire +'et Mot de passe : '+ randomstring + '.'
+         text: 'Bonjour Iskandddddder'
+        //  text: 'Bonjour '+ prestataire.nom_prestataire + ', votre mail est : ' + prestataire.email_prestataire +'et Mot de passe : '+ randomstring + '.'
     };
 
      transporter.sendMail(mailOptions, function(error, info){
@@ -118,6 +129,8 @@ async function validatePrestataire(params) {
           console.log('Email sent: ' + info.response);
         }
     });
+    
+    throw 'Prestataire Added';
 }
 }
 
