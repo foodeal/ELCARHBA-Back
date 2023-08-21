@@ -18,9 +18,25 @@ module.exports = {
     getFilter,
     getPrestataire,
     getPaginationPrestataire,
+    getAllOffres,
     delete: _delete
 };
 
+async function getAllOffres() {
+    offres = await db.Offre_Dispo.findAll({ 
+        order: [['date_debut', 'DESC']]
+    }); 
+    var ofs = JSON.parse(JSON.stringify(offres));
+    var res = [];
+    if (ofs.length) {
+    for (let i=0; i < ofs.length; i++) {
+        const ofsf = await getData(ofs[i]);
+        res = res.concat(ofsf);
+    }
+    console.log(res);
+    return res; 
+    }
+}
 
 async function getAll() {
     offres = await db.Offre_Dispo.findAll({ 
@@ -97,7 +113,8 @@ async function getAvant() {
 
     offres = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
         { date_fin: {[Op.gt]: today } },
-        { date_fin: {[Op.lt]: nextday } }
+        { date_fin: {[Op.lt]: nextday } },
+        { offre_expired: null }
     ]}});
 
     var ofs = JSON.parse(JSON.stringify(offres));
@@ -129,7 +146,7 @@ async function getSort(params) {
     if (params.type == "Date")
     {
         console.log("date")
-        var offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] });  
+        var offres = await db.Offre_Dispo.findAll({ where : { offre_expired: null}, raw:true, order: [['date_debut', 'DESC']] });  
         var ofs = JSON.parse(JSON.stringify(offres));
         var res = [];
         if (ofs.length) {
@@ -147,7 +164,7 @@ async function getSort(params) {
          var res = [];
          if (ofsf.length) {
          for (let j=0; j < ofsf.length; j++) {
-             const offres = await db.Offre_Dispo.findAll({ where: { offre_id: ofsf[j].id }, raw: true });
+             const offres = await db.Offre_Dispo.findAll({ where: { where : { offre_expired: null}, raw:true, offre_id: ofsf[j].id, offre_expired:false }, raw: true });
              var ofs = JSON.parse(JSON.stringify(offres));
              if (ofs.length) {
              for (let i=0; i < ofs.length; i++) {
@@ -159,7 +176,7 @@ async function getSort(params) {
         return res; 
     } else {
         console.log("all")
-        var offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] });  
+        var offres = await db.Offre_Dispo.findAll({ where : { offre_expired: null}, raw:true, order: [['date_debut', 'DESC']] });  
         var ofs = JSON.parse(JSON.stringify(offres));
         var res = [];
         if (ofs.length) {
@@ -173,7 +190,7 @@ async function getSort(params) {
 }
 
 async function getBest() {
-    const offres = await db.Offre_Dispo.findAll({ order: [['nombre_offres', 'DESC']], limit: 5 }); 
+    const offres = await db.Offre_Dispo.findAll({ where : { offre_expired: null}, raw:true, order: [['nombre_offres', 'DESC']], limit: 6 }); 
     var ofs = JSON.parse(JSON.stringify(offres));
     var res = [];
     if (ofs.length) {

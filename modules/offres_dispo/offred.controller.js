@@ -8,6 +8,7 @@ const offreService = require('./offred.service');
 // routes
 router.post('/add',authorize(), addSchema, add);
 router.get('/', getAll);
+router.get('/offres', getAllOffres);
 router.get('/best', getBest);
 router.get('/expired', getExpired);
 router.post('/sort', getSort);
@@ -30,7 +31,6 @@ function addSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        quantite_dispo: Joi.number(),
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
         offre_id: Joi.number(),
@@ -65,6 +65,12 @@ function getPaginationPrestataire(req, res, next) {
 
 function getAll(req, res, next) {
     offreService.getAll()
+        .then(ams => res.json(ams))
+        .catch(next);
+}
+
+function getAllOffres(req, res, next) {
+    offreService.getAllOffres()
         .then(ams => res.json(ams))
         .catch(next);
 }
@@ -119,7 +125,6 @@ function updateSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        quantite_dispo: Joi.number(),
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
         offre_id: Joi.number(),

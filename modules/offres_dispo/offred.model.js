@@ -5,7 +5,6 @@ function Offre_Dispo(sequelize) {
     const attributes = {
         date_debut: { type: DataTypes.DATEONLY, allowNull: true },
         date_fin: { type: DataTypes.DATEONLY, allowNull: true },      
-        quantite_dispo: { type: DataTypes.FLOAT, allowNull: true },
         statut_dispo: { type: DataTypes.TEXT, allowNull: true },
         nombre_offres: { type: DataTypes.INTEGER, allowNull: true },
         offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
