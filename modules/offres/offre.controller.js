@@ -37,12 +37,13 @@ function fulladdSchema(req, res, next) {
         type_huile: Joi.string().default(""),
         marque: Joi.string().default(""),
         modele: Joi.string().default(""),
+        offre_valid: Joi.boolean().default(true),
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
-        offre_id: Joi.number()
-        // offre_expired: Joi.boolean().default(false)
+        offre_id: Joi.number(),
+        offre_dispo_valid: Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }
@@ -63,11 +64,12 @@ function addSchema(req, res, next) {
         prix_remise: Joi.number(),
         prestataire_id: Joi.number(),
         categorie: Joi.string(),
-        motorisation: Joi.string(),
-        diametre: Joi.string(),
-        type_huile: Joi.string(),
-        marque: Joi.string(),
-        modele: Joi.string()
+        motorisation: Joi.string().default(""),
+        diametre: Joi.string().default(""),
+        type_huile: Joi.string().default(""),
+        marque: Joi.string().default(""),
+        modele: Joi.string().default(""),
+        offre_valid: Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }
@@ -128,11 +130,12 @@ function updateSchema(req, res, next) {
         prix_remise: Joi.number(),
         prestataire_id: Joi.number(),
         categorie: Joi.string(),
-        motorisation: Joi.string(),
-        diametre: Joi.string(),
-        type_huile: Joi.string(),
-        marque: Joi.string(),
-        modele: Joi.string()
+        motorisation: Joi.string().default(""),
+        diametre: Joi.string().default(""),
+        type_huile: Joi.string().default(""),
+        marque: Joi.string().default(""),
+        modele: Joi.string().default(""),
+        offre_valid: Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }

@@ -20,7 +20,8 @@ function Prestataire(sequelize) {
         cin_gerant: { type: DataTypes.STRING, allowNull: true },
         contrat_condition: { type: DataTypes.STRING, allowNull: true },
         motdepasse: { type: DataTypes.STRING, allowNull: true },
-        categorie: { type: DataTypes.STRING, allowNull: true }
+        categorie: { type: DataTypes.STRING, allowNull: true },
+        isActive: { type: DataTypes.BOOLEAN, allowNull: true }
     };
 
     const options = {

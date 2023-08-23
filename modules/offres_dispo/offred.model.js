@@ -8,7 +8,8 @@ function Offre_Dispo(sequelize) {
         statut_dispo: { type: DataTypes.TEXT, allowNull: true },
         nombre_offres: { type: DataTypes.INTEGER, allowNull: true },
         offre_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offres', key: 'id' } },
-        offre_expired: { type: DataTypes.BOOLEAN, allowNull: true }
+        offre_expired: { type: DataTypes.BOOLEAN, allowNull: true },
+        offre_dispo_valid: { type: DataTypes.BOOLEAN, allowNull: true }
     };
 
     const options = {

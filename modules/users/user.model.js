@@ -14,7 +14,8 @@ function User(sequelize) {
         adresse_user: { type: DataTypes.STRING, allowNull: true },
         motdepasse: { type: DataTypes.STRING, allowNull: false },
         argent_gagner: { type: DataTypes.FLOAT, allowNull: true },
-        point_gagner: { type: DataTypes.FLOAT, allowNull: true }
+        point_gagner: { type: DataTypes.FLOAT, allowNull: true },
+        isActive: { type: DataTypes.BOOLEAN, allowNull: true }
     };
 
     const options = {

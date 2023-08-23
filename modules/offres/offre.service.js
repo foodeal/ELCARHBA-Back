@@ -150,23 +150,26 @@ async function update(id, params) {
 
 async function _delete(params) {
     const offre = await getOffre(params.params.id);
+    offre.offre_valid = false;
     const offres = await db.Offre_Dispo.findAll({ where: { offre_id: offre.id }, raw: true }); 
-    const coupons = await db.Coupon.findAll({ where: { offre_id: offre.id }, raw: true }); 
     var ofs = JSON.parse(JSON.stringify(offres));
-    var cps = JSON.parse(JSON.stringify(coupons));
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
         const off = await db.Offre_Dispo.findByPk(ofs[i].id);
-        await off.destroy();
+        const coupons = await db.Coupon.findAll({ where: { offre_id: off.id }, raw: true }); 
+        var cps = JSON.parse(JSON.stringify(coupons));
+        if (cps.length) {
+            for (let j=0; j < cps.length; j++) {
+                const cp = await db.Coupon.findByPk(cps[j].id);
+                cp.coupon_valide = false;
+                await cp.save();
+            }
+        }
+        off.offre_dispo_valid = false;
+        await off.save();
     }
     }
-    if (cps.length) {
-    for (let j=0; j < cps.length; j++) {
-        const cp = await db.Coupon.findByPk(cps[j].id);
-        await cp.destroy();
-    }
-    }
-    await offre.destroy();
+    await offre.save();
 
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');

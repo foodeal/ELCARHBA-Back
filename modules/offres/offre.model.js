@@ -15,7 +15,8 @@ function Offre(sequelize) {
         diametre: { type: DataTypes.STRING, allowNull: true },
         type_huile: { type: DataTypes.STRING, allowNull: true },
         marque: { type: DataTypes.STRING, allowNull: true },
-        modele: { type: DataTypes.STRING, allowNull: true }
+        modele: { type: DataTypes.STRING, allowNull: true },
+        offre_valid: { type: DataTypes.BOOLEAN, allowNull: true }
     };
 
     const options = {

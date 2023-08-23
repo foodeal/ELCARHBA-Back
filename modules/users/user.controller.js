@@ -46,7 +46,8 @@ function registerSchema(req, res, next) {
         adresse_user: Joi.string(),
         motdepasse: Joi.string().min(6).required(),
         argent_gagner: Joi.number(),
-        point_gagner: Joi.number()
+        point_gagner: Joi.number(),
+        isActive:Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }
@@ -100,7 +101,8 @@ function updateSchema(req, res, next) {
         adresse_user: Joi.string().empty(''),
         motdepasse: Joi.string().min(6),
         argent_gagner: Joi.number(),
-        point_gagner: Joi.number()
+        point_gagner: Joi.number(),
+        isActive:Joi.boolean()
     });
     validateRequest(req, next, schema);
 }

@@ -34,7 +34,8 @@ function addSchema(req, res, next) {
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
         offre_id: Joi.number(),
-        offre_expired: Joi.boolean()
+        offre_expired: Joi.boolean(),
+        offre_dispo_valid: Joi.boolean().default(true),
     });
     validateRequest(req, next, schema);
 }
@@ -128,7 +129,8 @@ function updateSchema(req, res, next) {
         nombre_offres: Joi.number(),
         statut_dispo: Joi.string(),
         offre_id: Joi.number(),
-        offre_expired: Joi.boolean()
+        offre_expired: Joi.boolean(),
+        offre_dispo_valid: Joi.boolean()
     });
     validateRequest(req, next, schema);
 }

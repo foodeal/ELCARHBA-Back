@@ -116,7 +116,6 @@ async function create(params) {
     const user = await db.User.findByPk(params.body.user_id);
     // Encrypt
     var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
-    const pt = await addPoint(params.body);
     params.body.coupon_valide = true;
     params.body.coupon_expire = false;
     params.body.code_coupon = codeCryp;
@@ -379,6 +378,7 @@ async function dcryptCode(params) {
         { code_coupon: params.code }
     ]}});
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: coupon.offre_id }, raw: true });
+    const user = await db.User.findOne({ where: { id: coupon.user_id }, raw: true });
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
@@ -392,9 +392,17 @@ async function dcryptCode(params) {
         'files': file,
         'garage': garage,
         'prestataire': prestataire,
+        'user': user,
         'code' : originalText
     }
     if (b) {
+        offre_dispo.nombre_offres = offre_dispo.nombre_offres - coupon.quantite;
+        params.user_id = user.id;
+        params.offre_id = offre_dispo.id;
+        const offreUpd =  await db.Offre_Dispo.findByPk(offre_dispo.id);
+        Object.assign(offreUpd, offre_dispo);
+        await offre.save();
+        addPoint(params);
         return b;
     } else {
         throw "vide"

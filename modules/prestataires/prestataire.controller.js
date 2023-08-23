@@ -60,7 +60,8 @@ function registerSchema(req, res, next) {
         adresse_garage: Joi.string(),
         contact_garage: Joi.string(),
         type_garage: Joi.string(),
-        prestataire_id: Joi.number()
+        prestataire_id: Joi.number(),
+        isActive:Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }
@@ -115,7 +116,8 @@ function updateSchema(req, res, next) {
         cin_gerant: Joi.string(),
         contrat_condition: Joi.string(),
         motdepasse: Joi.string().min(6),
-        categorie: Joi.string()
+        categorie: Joi.string(),
+        isActive:Joi.boolean().default(true)
     });
     validateRequest(req, next, schema);
 }
