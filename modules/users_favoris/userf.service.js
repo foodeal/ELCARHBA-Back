@@ -10,6 +10,7 @@ module.exports = {
     create,
     update,
     findFavori,
+    isFavori,
     getByUser,
     delete: _delete
 };
@@ -26,6 +27,19 @@ async function getAll() {
 
 async function getById(id) {
     return await getFavori(id);
+}
+
+async function isFavori(user, offre) {
+    const favori = await await db.User_Favori.findOne({ where: { [Op.and] : [
+        { user_id: user },
+        { offre_id: offre }
+     ]}});
+    if (favori) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 async function create(params) {

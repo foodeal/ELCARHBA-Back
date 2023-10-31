@@ -10,6 +10,7 @@ router.post('/add',authorize(), addSchema, add);
 router.get('/', authorize(), getAll);
 router.get('/current', authorize(), getCurrent);
 router.get('/favoris/:id', authorize(), getByUser);
+router.get('/isfav/:user/:offre', authorize(), isFavori);
 router.get('/:id', authorize(), getById);
 router.post('/scoupon/', authorize(), findCoupon);
 router.put('/:id', authorize(), updateSchema, update);
@@ -50,6 +51,12 @@ function getById(req, res, next) {
 
 function getByUser(req, res, next) {
     userfService.getByUser(req.params.id)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function isFavori(req, res, next) {
+    userfService.isFavori(req.params.user, req.params.offre)
         .then(coupon => res.json(coupon))
         .catch(next);
 }

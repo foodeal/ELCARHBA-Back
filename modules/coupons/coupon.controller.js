@@ -13,6 +13,8 @@ router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.get('/expire/:id', authorize(), getExpired);
 router.get('/valide/:id', authorize(), getValide);
+router.get('/allexpired', authorize(), getAllExpired);
+router.get('/allvalides', authorize(), getAllValide);
 router.post('/scoupon/', authorize(), findCoupon);
 router.post('/serie', authorize(), serieCoupon);
 router.post('/dcrypt/', authorize(), dcryptCode);
@@ -47,6 +49,18 @@ function add(req, res, next) {
 function getAll(req, res, next) {
     couponService.getAll()
         .then(coupons => res.json(coupons))
+        .catch(next);
+}
+
+function getAllExpired(req, res, next) {
+    couponService.getAllExpired()
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function getAllValide(req, res, next) {
+    couponService.getAllValide()
+        .then(coupon => res.json(coupon))
         .catch(next);
 }
 

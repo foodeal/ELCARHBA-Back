@@ -17,9 +17,12 @@ module.exports = {
     update,
     findCoupon,
     getData,
+    addPoint,
     getDataCoupon,
     dcryptCode,
     serieCoupon,
+    getAllExpired,
+    getAllValide,
     delete: _delete
 };
 
@@ -67,6 +70,58 @@ async function getCouponDispo() {
     }
 }
 
+async function getAllExpired() {
+    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
+        { coupon_expire: true}
+    ]}});
+    var cps = JSON.parse(JSON.stringify(coupons));
+    var res = [];
+    if (cps.length) {
+    for (let i=0; i < cps.length; i++) {
+        const cpsf = await getDataCoupon(cps[i]);
+        res = res.concat(cpsf);
+    }
+    console.log(res);
+    }
+
+    return res; 
+}
+
+async function addPoint(params) {
+    const user = await db.User.findByPk(params.user_id);
+    const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: params.offre_id }, raw: true });    
+    const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
+    if (offre.prix_initial < 51) {
+        user.pointgagner = user.pointgagner + 2;
+    } else if (offre.prix_initial < 151) {
+        user.pointgagner = user.pointgagner + 5;
+    } else if (offre.prix_initial < 301) {
+        user.pointgagner = user.pointgagner + 10;
+    } else {
+        user.pointgagner = user.pointgagner + 15;
+    }
+    Object.assign(user, user);
+    await user.save();
+    return omitHash(user.get());
+}
+
+async function getAllValide() {
+    coupons = await db.Coupon.findAll({ where: { [Op.and] : [
+        { coupon_valide: true},
+        { coupon_expire : false}
+    ]}});
+    var cps = JSON.parse(JSON.stringify(coupons));
+    var res = [];
+    if (cps.length) {
+    for (let i=0; i < cps.length; i++) {
+        const cpsf = await getDataCoupon(cps[i]);
+        res = res.concat(cpsf);
+    }
+    console.log(res);
+    }
+    return res; 
+}
+
 async function getById(id) {
     const coupon = await db.Coupon.findByPk(id);
     if (!coupon) throw 'Pas de Coupon';
@@ -87,8 +142,9 @@ async function getExpired(id) {
         res = res.concat(cpsf);
     }
     console.log(res);
-    return res; 
     }
+
+    return res; 
 }
 
 async function getValide(id) {
@@ -105,14 +161,21 @@ async function getValide(id) {
         res = res.concat(cpsf);
     }
     console.log(res);
-    return res; 
     }
+
+    return res; 
 }
 
 async function create(params) {
+    //Update Offre 
+    const offre = await getOffre(params.body.offre_id);
+    if (offre.nombre_offre < params.body.quantite) {
+        return "Nombre des offres insuffisant"
+    } 
+    else {
     code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
     nb = await db.Coupon.count();
-    serie = "CO" + (nb + 1);
+    serie = "CP" + params.body.user_id + params.body.prestataire_id + (nb + 1);
     const user = await db.User.findByPk(params.body.user_id);
     // Encrypt
     var codeCryp = CryptoJS.AES.encrypt(code, 'elcarhba').toString();
@@ -277,7 +340,7 @@ async function create(params) {
                             </tr>
                           </tbody>
                         </table>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Vous trouverez ci-joint votre coupon <b> ` + serie + ` </b> :</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Vous trouverez ci-joint votre coupon avec code <b> ` + serie + ` </b> :</p>
                         <img class="displayed" id='barcode' 
                                 src="https://api.qrserver.com/v1/create-qr-code/?data=`+ codeCryp + `&amp;size=250x250" 
                                 alt="ElCarhba" 
@@ -352,30 +415,14 @@ async function create(params) {
     
 
     return await omitHash(couponData);
-}
-
-async function addPoint(params) {
-    const user = await db.User.findByPk(params.user_id);
-    const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: params.offre_id }, raw: true });    
-    const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
-    if (offre.prix_initial < 51) {
-        user.pointgagner = user.pointgagner + 2;
-    } else if (offre.prix_initial < 151) {
-        user.pointgagner = user.pointgagner + 5;
-    } else if (offre.prix_initial < 301) {
-        user.pointgagner = user.pointgagner + 10;
-    } else {
-        user.pointgagner = user.pointgagner + 15;
     }
-    Object.assign(user, user);
-    await user.save();
-    return omitHash(user.get());
 }
 
 async function dcryptCode(params) {
     // Dcrypt
+    const barcode = (params.code).replace(/\s/g, '+')
     const coupon = await db.Coupon.findOne({ where: { [Op.and] : [
-        { code_coupon: params.code }
+        { code_coupon: barcode }
     ]}});
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: coupon.offre_id }, raw: true });
     const user = await db.User.findOne({ where: { id: coupon.user_id }, raw: true });
@@ -383,7 +430,7 @@ async function dcryptCode(params) {
     const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
-    var bytes  = CryptoJS.AES.decrypt(params.code, 'elcarhba');
+    var bytes  = CryptoJS.AES.decrypt(barcode, 'elcarhba');
     var originalText = bytes.toString(CryptoJS.enc.Utf8);
     let b = {
         'coupon' : coupon,
@@ -401,7 +448,7 @@ async function dcryptCode(params) {
         params.offre_id = offre_dispo.id;
         const offreUpd =  await db.Offre_Dispo.findByPk(offre_dispo.id);
         Object.assign(offreUpd, offre_dispo);
-        await offre.save();
+        await offreUpd.save();
         addPoint(params);
         return b;
     } else {
@@ -443,10 +490,15 @@ async function _delete(params) {
 }
 
 // helper functions
+
+async function getOffre(id) {
+    const offre = await db.Offre_Dispo.findByPk(id);
+    if (!offre) throw 'Pas de Matiere';
+    return offre;
+}
+
 async function getDataCoupon(off) {
-    console.log(off.code_coupon);
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
-    console.log(offre_dispo.offre_id);
     const user = await db.User.findOne({ where: { id: off.user_id }, raw: true });
     
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
@@ -484,13 +536,11 @@ async function getCoupon(id) {
 }
 
 async function serieCoupon(params) {
-    console.log("ICI")
-    console.log("Params : " + params)
     if (params)
-    {
-        const coupon = await db.Coupon.findOne({ where: { serie_coupon: params.serie_coupon  }});
+    { 
+        const coupon = await db.Coupon.findOne({ where: { serie_coupon : params.serie_coupon }});
         console.log(coupon);
-        if (!coupon) {throw 'Vide' }
+        if (!(coupon)) {throw 'Vide' }
         else {
           const couponData = await getDataCoupon(coupon.get());
           return couponData;

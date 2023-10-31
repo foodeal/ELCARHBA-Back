@@ -119,7 +119,7 @@ async function validatePrestataire(id) {
          to: pres.email_prestataire,
          subject: 'Changer Mot de Passe',
          text: 'Mot de passe ELCarhba',
-         html: `Bonjour `+ prestataire.nom_prestataire + `, votre mail est : ` + prestataire.email_prestataire + ` et Mot de passe : <h3>`+ randomstring + `</h3>.`
+         html: `Bonjour `+ pres.nom_prestataire + `, votre mail est : ` + pres.email_prestataire + ` et Mot de passe : <h3>`+ randomstring + `</h3>.`
     };
 
      transporter.sendMail(mailOptions, function(error, info){
@@ -130,7 +130,7 @@ async function validatePrestataire(id) {
         }
     });
     
-    throw 'Prestataire Added';
+    return 'Prestataire Added';
 }
 }
 
