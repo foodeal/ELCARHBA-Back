@@ -206,6 +206,7 @@ async function getBest() {
 
 async function getData(off) {
     const offre = await db.Offre.findOne({ where: { id: off.offre_id }, raw: true });
+    const stock = await db.Stock.findOne({ where: { id: off.id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
         const avis_count = await db.Avis.findOne({ 
@@ -224,6 +225,7 @@ async function getData(off) {
         'files': file,
         'garage': garage,
         'prestataire': prestataire,
+        'stock': stock,
         'avis_count': avis_count,
         'avis_sum': avis_sum
     }
@@ -238,6 +240,7 @@ async function getById(id) {
     const offre = await db.Offre.findOne({ where: { id: dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: dispo.offre_id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
+    const stock = await db.Stock.findOne({ where: { ofre_dispo_id: dispo.id }, raw: true });
     const avis_count = await db.Avis.findOne({ 
         where: { garage_id: await garage.id }, 
         attributes: ['id', [Sequelize.fn('count', Sequelize.col('id')), 'count']],
@@ -254,6 +257,7 @@ async function getById(id) {
         'files': file,
         'garage': garage,
         'prestataire': prestataire,
+        'stock': stock,
         'avis_count': avis_count,
         'avis_sum': avis_sum
     }

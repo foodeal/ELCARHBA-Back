@@ -27,9 +27,16 @@ async function createFull(params) {
     const am = await db.Offre.create(params.body);
     params.body.offre_id = am.id;
     const am2 = await db.Offre_Dispo.create(params.body)
+    params.body.code_stock = 'S'+ am.id + 'D' + am2.id;
+    params.body.quantite_stock = am2.nombre_offres;
+    params.body.gain_stock = 0;
+    params.body.users_stock = 0;
+    params.body.offre_dispo_id = am2.id;
+    const st = await fb.Stock.create(params.body)
     let b = {
         offre : am,
-        offre_dispo : am2
+        offre_dispo : am2,
+        stock: st
     }
 
     params.date = Date.now();

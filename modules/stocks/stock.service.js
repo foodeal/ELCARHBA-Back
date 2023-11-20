@@ -10,94 +10,94 @@ module.exports = {
     create,
     update,
     getFichiers,
-    findProduit,
+    findStock,
     delete: _delete
 };
 
 
 async function getAll() {
-    return await db.Produit.findAll(); 
+    return await db.Stock.findAll(); 
 }
 
 async function getById(id) {
-    return await getProduit(id);
+    return await getStock(id);
 }
 
 async function create(params) {
-    const am = await db.Produit.create(params.body);
+    const am = await db.Stock.create(params.body);
 
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
     params.date = Date.now();
     params.utilisateur = decoded.sub;
-    params.mod = "Produit";
-    params.msg = "Ajout de Produit ID : " + am.id;
+    params.mod = "Stock";
+    params.msg = "Ajout de Stock ID : " + am.id;
     await db.Log.create(params);
 
     return await omitHash(am.get());
 }
 
 async function update(id, params) {
-    const produit = await getProduit(id);
+    const stock = await getStock(id);
 
     // copy params to am and save
-    Object.assign(produit, params.body);
-    await produit.save();
+    Object.assign(stock, params.body);
+    await stock.save();
 
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
     params.date = Date.now();
     params.utilisateur = decoded.sub;
-    params.mod = "Produit";
-    params.msg = "Update de Produit ID : " + produit.id;
+    params.mod = "Stock";
+    params.msg = "Update de Stock ID : " + stock.id;
     await db.Log.create(params);
 
-    return await omitHash(produit.get());
+    return await omitHash(stock.get());
 }
 
 async function _delete(params) {
-    const produit = await getProduit(params.params.id);
-    await produit.destroy();
+    const stock = await getStock(params.params.id);
+    await stock.destroy();
 
     const userToken = params.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
     params.date = Date.now();
     params.utilisateur = decoded.sub;
-    params.mod = "Produit";
-    params.msg = "Suppression de Produit ID : " + produit.id;
+    params.mod = "Stock";
+    params.msg = "Suppression de Stock ID : " + stock.id;
     await db.Log.create(params);
 }
 
 // helper functions
 
-async function getProduit(id) {
-    const produit = await db.Produit.findByPk(id);
-    if (!produit) throw 'Pas de Matiere';
-    return produit;
+async function getStock(id) {
+    const stock = await db.Stock.findByPk(id);
+    if (!stock) throw 'Pas de Stock';
+    return stock;
 }
 
 async function getFichiers(id) {
-    return await db.Fichier.findAll({ where: { produit: id } });
+    return await db.Fichier.findAll({ where: { stock: id } });
 }
 
 
-async function findProduit(params) {
+async function findStock(params) {
     if (params)
     {
-        const produit = await db.Produit.findAll({ where: { [Op.and] : [
+        const stock = await db.Stock.findAll({ where: { [Op.and] : [
            { date_debut: {[Op.like]: params.date_debut + '%'} },
            { date_fin: {[Op.like]: params.date_fin + '%'} }
         ]}});
-        if (!produit) {throw 'Vide' }
-        else return await produit;
+        if (!stock) {throw 'Vide' }
+        else return await stock;
     } else 
     { throw 'Vide' ;}
 }
 
-function omitHash(produit) {
-    const { hash, ...produitWithoutHash } = produit;
-    return produitWithoutHash;
+function omitHash(stock) {
+    const { hash, ...stockWithoutHash } = stock;
+    return stockWithoutHash;
 }
