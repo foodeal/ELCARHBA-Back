@@ -432,25 +432,30 @@ async function dcryptCode(params) {
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     var bytes  = CryptoJS.AES.decrypt(barcode, 'elcarhba');
     var originalText = bytes.toString(CryptoJS.enc.Utf8);
-    let b = {
-        'coupon' : coupon,
-        'offre_dispo': offre_dispo,
-        'offre': offre,
-        'files': file,
-        'garage': garage,
-        'prestataire': prestataire,
-        'user': user,
-        'code' : originalText
-    }
+    const b = true;
     if (b) {
-        offre_dispo.nombre_offres = offre_dispo.nombre_offres - coupon.quantite;
+        const stock = await db.Stock.findOne({ where: { ofre_dispo_id: offre_dispo.id }, raw: true });
+        stock.quantite_stock = stock.quantite_stock - coupon.quantite;
+        stock.gain_stock = stock.gain_stock + offre.prix_remise;
+        stock.users_stock = stock.users_stock + 1;
         params.user_id = user.id;
         params.offre_id = offre_dispo.id;
-        const offreUpd =  await db.Offre_Dispo.findByPk(offre_dispo.id);
-        Object.assign(offreUpd, offre_dispo);
-        await offreUpd.save();
+        const stockUpd =  await db.Stock.findByPk(stock.id);
+        Object.assign(stockUpd, stock);
+        await stockUpd.save();
         addPoint(params);
-        return b;
+        let res = {
+            'coupon' : coupon,
+            'offre_dispo': offre_dispo,
+            'offre': offre,
+            'files': file,
+            'garage': garage,
+            'prestataire': prestataire,
+            'user': user,
+            'stock': stock,
+            'code' : originalText
+        }
+        return res;
     } else {
         throw "vide"
     }

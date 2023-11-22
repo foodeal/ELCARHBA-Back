@@ -7,7 +7,7 @@ function Stock(sequelize) {
         quantite_stock: { type: DataTypes.INTEGER, allowNull: true },
         gain_stock: { type: DataTypes.INTEGER, allowNull: true },
         users_stock: { type: DataTypes.INTEGER, allowNull: true },
-        offre_dispo_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offre_Dispo', key: 'id' } }
+        offre_dispo_id: { type: DataTypes.INTEGER, allowNull: false, references: { model : 'Offre_Dispos', key: 'id' } }
     };
 
     const options = {

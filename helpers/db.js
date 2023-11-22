@@ -20,7 +20,7 @@ Offre = require('../modules/offres/offre.model');
 Offre_Dispo = require('../modules/offres_dispo/offred.model');
 Carnet = require('../modules/carnets/carnet.model');
 Avis = require('../modules/avis/avis.model');
-Stock = require('./modules/stocks/stock.model');
+Stock = require('../modules/stocks/stock.model');
 
 Historique = require('../modules/historiques/historique.model');
 
@@ -58,7 +58,7 @@ async function initialize() {
     db.Carnet = require('../modules/carnets/carnet.model')(sequelize);
     db.Avis = require('../modules/avis/avis.model')(sequelize);
     db.Expert = require('../modules/experts/expert.model')(sequelize);
-    db.Stock = require('./modules/stocks/stock.model')(sequelize);
+    db.Stock = require('../modules/stocks/stock.model')(sequelize);
     db.Historique = require('../modules/historiques/historique.model')(sequelize);
     
     // Association ManyToMany

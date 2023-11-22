@@ -31,7 +31,7 @@ function addSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        nombre_offres: Joi.number().default(0).allow(0),
+        nombre_offres: Joi.number().default(0).allow(0).min(0),
         statut_dispo: Joi.string().default('Disponible').allow(''),
         offre_id: Joi.number(),
         offre_expired: Joi.boolean().default(false),
@@ -126,7 +126,7 @@ function updateSchema(req, res, next) {
     const schema = Joi.object({
         date_debut: Joi.date().required(),
         date_fin: Joi.date().required(),
-        nombre_offres: Joi.number().default(0).allow(0),
+        nombre_offres: Joi.number().default(0).allow(0).min(0),
         statut_dispo: Joi.string().default('Disponible').allow(''),
         offre_id: Joi.number(),
         offre_expired: Joi.boolean(),
