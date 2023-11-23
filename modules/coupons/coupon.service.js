@@ -104,9 +104,9 @@ async function addPoint(params) {
     const userUpd = await db.User.findByPk(params.user_id);
     Object.assign(userUpd, user);
     await userUpd.save();
-    return true;
+    // return true;
     // return omitHash(user.get());
-    // return userUpd.pointgagner;
+    return userUpd.pointgagner;
 }
 
 async function getAllValide() {
@@ -456,6 +456,7 @@ async function dcryptCode(params) {
         Object.assign(stockUpd, stock);
         await stockUpd.save();
         const pt = await addPoint(params);
+        if (stock) { off.nombre_offres = stock.quantite_stock; }
         let res = {
             'coupon' : coupon,
             'offre_dispo': offre_dispo,
@@ -519,7 +520,7 @@ async function getOffre(id) {
 async function getDataCoupon(off) {
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
     const user = await db.User.findOne({ where: { id: off.user_id }, raw: true });
-    
+    const stock = await db.Stock.findOne({ where: { ofre_dispo_id: await offre_dispo.id }, raw: true });
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
@@ -534,6 +535,7 @@ async function getDataCoupon(off) {
         raw: true 
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: off.prestataire_id }, raw: true });
+    if (stock) { off.nombre_offres = stock.quantite_stock; }
     let b = {
         'user': user,
         'offre_dispo': offre_dispo,
@@ -541,6 +543,7 @@ async function getDataCoupon(off) {
         'files': file,
         'garage': garage,
         'prestataire': prestataire,
+        'stock': stock,
         'avis_count': avis_count,
         'avis_sum': avis_sum
     }
