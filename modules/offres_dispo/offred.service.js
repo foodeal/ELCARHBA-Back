@@ -220,6 +220,7 @@ async function getData(off) {
         raw: true 
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
+    if (stock) { off.nombre_offres = stock.quantite_stock; }
     let b = {
         'offre': offre,
         'files': file,
@@ -252,6 +253,7 @@ async function getById(id) {
         raw: true 
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
+    if (stock) { dispo.nombre_offres = stock.quantite_stock; }
     let b = {
         'offre': offre,
         'files': file,

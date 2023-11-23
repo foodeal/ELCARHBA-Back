@@ -88,6 +88,7 @@ async function getAllExpired() {
 }
 
 async function addPoint(params) {
+    console.log('Point');
     const user = await db.User.findByPk(params.user_id);
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: params.offre_id }, raw: true });    
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
@@ -100,9 +101,12 @@ async function addPoint(params) {
     } else {
         user.pointgagner = user.pointgagner + 15;
     }
-    Object.assign(user, user);
-    await user.save();
-    return omitHash(user.get());
+    const userUpd = await db.User.findByPk(params.user_id);
+    Object.assign(userUpd, user);
+    await userUpd.save();
+    return true;
+    // return omitHash(user.get());
+    // return userUpd.pointgagner;
 }
 
 async function getAllValide() {
@@ -169,7 +173,8 @@ async function getValide(id) {
 async function create(params) {
     //Update Offre 
     const offre = await getOffre(params.body.offre_id);
-    if (offre.nombre_offre < params.body.quantite) {
+    const stock = await db.Stock.findOne({ where: { offre_dispo_id: offre.id }, raw: true });
+    if (stock.quantite_stock < params.body.quantite) {
         return "Nombre des offres insuffisant"
     } 
     else {
@@ -434,8 +439,15 @@ async function dcryptCode(params) {
     var originalText = bytes.toString(CryptoJS.enc.Utf8);
     const b = true;
     if (b) {
-        const stock = await db.Stock.findOne({ where: { ofre_dispo_id: offre_dispo.id }, raw: true });
+        const stock = await db.Stock.findOne({ where: { offre_dispo_id: offre_dispo.id }, raw: true });
         stock.quantite_stock = stock.quantite_stock - coupon.quantite;
+        if ( stock.quantite_stock < 0) {
+            return 'Stock insuffisant';
+        } else {
+        const couponUpd = await db.Coupon.findByPk(coupon.id);
+        coupon.coupon_valide = false;
+        Object.assign(couponUpd, coupon);
+        await couponUpd.save();
         stock.gain_stock = stock.gain_stock + offre.prix_remise;
         stock.users_stock = stock.users_stock + 1;
         params.user_id = user.id;
@@ -443,7 +455,7 @@ async function dcryptCode(params) {
         const stockUpd =  await db.Stock.findByPk(stock.id);
         Object.assign(stockUpd, stock);
         await stockUpd.save();
-        addPoint(params);
+        const pt = await addPoint(params);
         let res = {
             'coupon' : coupon,
             'offre_dispo': offre_dispo,
@@ -453,9 +465,11 @@ async function dcryptCode(params) {
             'prestataire': prestataire,
             'user': user,
             'stock': stock,
+            'pt': pt,
             'code' : originalText
         }
         return res;
+        }
     } else {
         throw "vide"
     }
