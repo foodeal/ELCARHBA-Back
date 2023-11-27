@@ -818,7 +818,6 @@ async function serieCoupon(params) {
     if (params)
     { 
         const coupon = await db.Coupon.findOne({ where: { serie_coupon : params.serie_coupon }});
-        console.log(coupon);
         if (!(coupon)) {throw 'Vide' }
         else {
           const couponData = await getDataCoupon(coupon.get());
