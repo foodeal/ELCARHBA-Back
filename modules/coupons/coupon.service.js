@@ -432,6 +432,10 @@ async function createByPoints(params) {
     } else if (user.point_gagner < main_offre.prix_points) {
         return "Nombre de points insuffisant";
     } else {
+    user.point_gagner = user.point_gagner - main_offre.prix_points;
+    const userUpd = await db.User.findByPk(params.user_id);
+    Object.assign(userUpd, user);
+    await userUpd.save();
     code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
     nb = await db.Coupon.count();
     serie = "CP" + params.body.user_id + params.body.prestataire_id + (nb + 1);
