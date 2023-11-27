@@ -33,7 +33,6 @@ async function getAllOffres() {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -51,7 +50,6 @@ async function getAll() {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -69,7 +67,6 @@ async function getPaginationPrestataire(id) {
         res = res.concat(ofsf);
         }
     }
-    console.log(res);
     return res; 
     }
 }
@@ -87,29 +84,13 @@ async function getPrestataire(id) {
         res = res.concat(ofsf);
         }
     }
-    console.log(res);
     return res; 
     }
 }
 
-// async function getAll() {
-//     offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
-//     var ofs = JSON.parse(JSON.stringify(offres));
-//     var res = [];
-//     if (ofs.length) {
-//     for (let i=0; i < ofs.length; i++) {
-//         const ofsf = await getData(ofs[i]);
-//         res = res.concat(ofsf);
-//     }
-//     console.log(res);
-//     return res; 
-//     }
-// }
-
 async function getAvant() {
     var today = (new Date(new Date().getTime())).toISOString();
     var nextday = (new Date(new Date().getTime()+(3*24*60*60*1000))).toISOString();
-    console.log(today);
 
     offres = await db.Offre_Dispo.findAll({ where: { [Op.and] : [
         { date_fin: {[Op.gt]: today } },
@@ -124,7 +105,6 @@ async function getAvant() {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -145,7 +125,6 @@ async function getExpired() {
 async function getSort(params) {
     if (params.type == "Date")
     {
-        console.log("date")
         var offres = await db.Offre_Dispo.findAll({ where : { offre_expired: false}, raw:true, order: [['date_debut', 'DESC']] });  
         var ofs = JSON.parse(JSON.stringify(offres));
         var res = [];
@@ -157,7 +136,6 @@ async function getSort(params) {
         return res; 
         }
     } else if (params.type == "Prix") {
-         console.log("prix")
          var offre = await db.Offre.findAll({ order: [['prix_remise', 'DESC']] });
          if (offre) {
          var ofsf = JSON.parse(JSON.stringify(offre));
@@ -175,7 +153,6 @@ async function getSort(params) {
          }} 
         return res; 
     } else {
-        console.log("all")
         var offres = await db.Offre_Dispo.findAll({ where : { offre_expired: false}, raw:true, order: [['date_debut', 'DESC']] });  
         var ofs = JSON.parse(JSON.stringify(offres));
         var res = [];
@@ -198,7 +175,6 @@ async function getBest() {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -237,7 +213,6 @@ async function getData(off) {
 
 async function getById(id) {
     var dispo = await db.Offre_Dispo.findOne({ where: { id: id }, raw: true });
-    console.log(dispo);
     const offre = await db.Offre.findOne({ where: { id: dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: dispo.offre_id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
@@ -332,7 +307,6 @@ async function findOffre(params) {
 
     if (params.titre_offre) 
     {
-        console.log(params);
         const offre = await db.Offre.findAll({ where: { [Op.and] : [
            { titre_offre: {[Op.like]: params.titre_offre + '%'} },
         ]}});
@@ -347,7 +321,6 @@ async function findOffre(params) {
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
                 const ofsf = await getData(ofs[i]);
-                console.log("res : " + res);
                 res = res.concat(ofsf);
             }            
         }}   
@@ -355,7 +328,6 @@ async function findOffre(params) {
     } 
     else if (params.marque_offre) 
     {
-        console.log(params);
         const offre = await db.Offre.findAll({ where: { 
            marque: params.marque_offre
         }});
@@ -370,14 +342,12 @@ async function findOffre(params) {
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
                 const ofsf = await getData(ofs[i]);
-                console.log("res : " + res);
                 res = res.concat(ofsf);
             }            
         }}   
         }}
     } else if (params.modele_offre) 
     {
-        console.log(params);
         const offre = await db.Offre.findAll({ where: { [Op.and] : [
            { modele: {[Op.like]: params.modele_offre + '%'} },
         ]}});
@@ -392,14 +362,12 @@ async function findOffre(params) {
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
                 const ofsf = await getData(ofs[i]);
-                console.log("res : " + res);
                 res = res.concat(ofsf);
             }            
         }}   
         }}
     } else  if (params.motorisation_offre) 
     {
-        console.log(params);
         const offre = await db.Offre.findAll({ where: { [Op.and] : [
            { motorisation: {[Op.like]: params.motorisation_offre + '%'} },
         ]}});
@@ -414,7 +382,6 @@ async function findOffre(params) {
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
                 const ofsf = await getData(ofs[i]);
-                console.log("res : " + res);
                 res = res.concat(ofsf);
             }            
         }}   
@@ -422,7 +389,6 @@ async function findOffre(params) {
     } 
     else
     {
-        console.log(params);
         offres = await db.Offre_Dispo.findAll({ order: [['date_debut', 'DESC']] }); 
         var ofs = JSON.parse(JSON.stringify(offres));
         var res = [];
@@ -442,7 +408,6 @@ async function getFilter(params) {
     if (params)
     {
         if (params.categorie) {
-        console.log(params);
         const offre = await db.Offre.findAll({ where: { [Op.or] : [
            { categorie: {[Op.or]: params.categorie } },
         ]}});
@@ -457,14 +422,12 @@ async function getFilter(params) {
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
                 const ofsf = await getData(ofs[i]);
-                console.log("res : " + res);
                 res = res.concat(ofsf);
             }            
         }}   
         }}
         }  
         if (params.motorisation) {
-            console.log(params);
             const offre = await db.Offre.findAll({ where: { [Op.or] : [
                { motorisation: {[Op.like]: params.motorisation + '%'} },
             ]}});
@@ -479,7 +442,6 @@ async function getFilter(params) {
                 if (ofs.length) {
                 for (let i=0; i < ofs.length; i++) {
                     const ofsf = await getData(ofs[i]);
-                    console.log("res : " + res);
                     res = res.concat(ofsf);
                 }            
             }}   
