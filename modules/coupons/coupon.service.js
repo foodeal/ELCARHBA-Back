@@ -171,7 +171,7 @@ async function getValide(id) {
 async function create(params) {
     //Update Offre 
     const offre = await getOffre(params.body.offre_id);
-    const stock = await db.Stock.findOne({ where: { offre_dispo_id: offre.id }, raw: true });
+    const stock = await db.Stock.findOne({ where: { offre_dispo_id: await offre.id }, raw: true });
     if (stock.quantite_stock < params.body.quantite) {
         return "Nombre des offres insuffisant"
     } 
@@ -433,7 +433,7 @@ async function createByPoints(params) {
         return "Nombre de points insuffisant";
     } else {
     user.point_gagner = user.point_gagner - main_offre.prix_points;
-    const userUpd = await db.User.findByPk(params.user_id);
+    const userUpd = await db.User.findByPk(params.body.user_id);
     Object.assign(userUpd, user);
     await userUpd.save();
     code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
@@ -609,7 +609,9 @@ async function createByPoints(params) {
                                 title="ElCarhba" 
                                 width="250" 
                                 height="250" />
+                                <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Cette offre est achetée en échange de points !</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Merci !</p>
+
                       </td>
                     </tr>
                   </table>
@@ -625,7 +627,6 @@ async function createByPoints(params) {
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                 <tr>
                   <td class="content-block" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;" valign="top" align="center">
-                  <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;">Cette offre est achetée en échange de points !</span>
                     <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;">ElCarhba - Tunis</span>
                     <br> Erreur <a href="" style="text-decoration: underline; color: #999999; font-size: 12px; text-align: center;">Contact</a>.
                   </td>
