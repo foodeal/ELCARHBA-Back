@@ -25,6 +25,7 @@ async function createFull(params) {
     params.body.offre_expired = false;
     params.body.prestataire_id = decoded.sub;
     const am = await db.Offre.create(params.body);
+    params.body.prix_points = Math.round(params.body.prix_initial);
     params.body.offre_id = am.id;
     const am2 = await db.Offre_Dispo.create(params.body)
     params.body.code_stock = 'S'+ am.id + 'D' + am2.id;
@@ -138,7 +139,7 @@ async function create(params) {
 
 async function update(id, params) {
     const offre = await getOffre(id);
-
+    params.body.prix_points = Math.round(params.body.prix_initial);
     // copy params to am and save
     Object.assign(offre, params.body);
     await offre.save();

@@ -9,6 +9,7 @@ function Offre(sequelize) {
         prix_initial: { type: DataTypes.FLOAT, allowNull: true },
         pourcentage_prix_initial: { type: DataTypes.FLOAT, allowNull: true },
         prix_remise: { type: DataTypes.FLOAT, allowNull: true },
+        prix_points: { type: DataTypes.INTEGER, allowNull: true },
         prestataire_id: { type: DataTypes.INTEGER, allowNull: true, references: { model : 'Prestataires', key: 'id' } },
         categorie: { type: DataTypes.STRING, allowNull: true },
         motorisation: { type: DataTypes.STRING, allowNull: true },

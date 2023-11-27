@@ -7,6 +7,7 @@ const couponService = require('./coupon.service');
 
 // routes
 router.post('/add',authorize(), addSchema, add);
+router.post('/addbypoints',authorize(), addSchema, addbypoints);
 router.get('/', authorize(), getAll);
 router.get('/dispo', authorize(), getCouponDispo);
 router.get('/current', authorize(), getCurrent);
@@ -45,6 +46,13 @@ function add(req, res, next) {
         .then(coupon => res.json(coupon))
         .catch(next);
 }
+
+function addbypoints(req, res, next) {
+    couponService.createByPoints(req)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
 
 function getAll(req, res, next) {
     couponService.getAll()
