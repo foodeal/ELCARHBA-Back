@@ -777,7 +777,7 @@ async function getOffre(id) {
 async function getDataCoupon(off) {
     const offre_dispo = await db.Offre_Dispo.findOne({ where: { id: off.offre_id }, raw: true });
     const user = await db.User.findOne({ where: { id: off.user_id }, raw: true });
-    const stock = await db.Stock.findOne({ where: { ofre_dispo_id: await offre_dispo.id }, raw: true });
+    const stock = await db.Stock.findOne({ where: { offre_dispo_id: await offre_dispo.id }, raw: true });
     const offre = await db.Offre.findOne({ where: { id: await offre_dispo.offre_id }, raw: true });
     const file = await db.Fichier.findAll({ where: { offre: off.id }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: off.prestataire_id }, raw: true });
