@@ -2,7 +2,14 @@
 const db = require('./../../helpers/db');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
+// AWS
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+    region: 'de',
+    accessKeyId: 'f6920d3469784ad8af3f72472d89ae56',
+    secretAccessKey: '645c52c0f42f4de5bb3599eea1fb14da',
+    endpoint: "https://s3.de.io.cloud.ovh.net/"
+  });
 
 module.exports = {
     getAll,
@@ -18,34 +25,60 @@ module.exports = {
     delete: _delete
 };
 
-async function createFull(params) {
-    const userToken = params.headers.authorization;
+async function createFull(req, res) {
+
+    const userToken = req.headers.authorization;
     const token = userToken.split(' ');
     const decoded = jwt.verify(token[1], 'Foodealz')
-    params.body.offre_expired = false;
-    params.body.prestataire_id = decoded.sub;
-    const am = await db.Offre.create(params.body);
-    params.body.prix_points = Math.round(params.body.prix_initial);
-    params.body.offre_id = am.id;
-    const am2 = await db.Offre_Dispo.create(params.body)
-    params.body.code_stock = 'S'+ am.id + 'D' + am2.id;
-    params.body.quantite_stock = am2.nombre_offres;
-    params.body.gain_stock = 0;
-    params.body.users_stock = 0;
-    params.body.offre_dispo_id = am2.id;
-    const st = await db.Stock.create(params.body)
+    req.body.offre_expired = false;
+    req.body.prestataire_id = decoded.sub;
+    const am = await db.Offre.create(req.body);
+    req.body.prix_points = Math.round(req.body.prix_initial);
+    req.body.offre_id = am.id;
+    req.body.offre = am.id;
+    const am2 = await db.Offre_Dispo.create(req.body)
+    req.body.code_stock = 'S'+ am.id + 'D' + am2.id;
+    req.body.quantite_stock = am2.nombre_offres;
+    req.body.gain_stock = 0;
+    req.body.users_stock = 0;
+    req.body.offre_dispo_id = am2.id;
+    const st = await db.Stock.create(req.body)
+    req.body.link = "";
+    req.body.path = req.file.path;
+    const fname = req.body.titre_offre.replace(/ /g,'') + am.id;
+    req.body.name = fname;
+    console.log(fname);
+    req.body.type = req.file.originalname.substr(req.file.originalname.lastIndexOf('.') + 1);
+    
+    s3.upload({
+        Bucket: "elcarhba",
+        Key: req.body.titre_offre,
+        Body: req.file.buffer
+        }, (err, data) => {
+        if (err) {
+        console.error(err);
+        } else {
+        req.body.url = data.Location;
+        console.log(`File uploaded successfully. ${data.Location}`);
+        console.log("Req: " + req.body.path);
+        db.Fichier.create(req.body);
+        }
+    });
+
+    req.date = Date.now();
+    req.utilisateur = decoded.sub;
+    req.mod = "Offre";
+    req.msg = "Ajout de Offre ID : " + am.id;
+    await db.Log.create(req);
+    
+    const fichier = db.Fichier.findOne({ where: { offre: am.id }, raw: true });
     let b = {
         offre : am,
         offre_dispo : am2,
-        stock: st
+        stock: st,
+        fichier: fichier
     }
-
-    params.date = Date.now();
-    params.utilisateur = decoded.sub;
-    params.mod = "Offre";
-    params.msg = "Ajout de Offre ID : " + am.id;
-    await db.Log.create(params);
-
+    
     return b;
 }
 
@@ -59,7 +92,6 @@ async function getAll() {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -73,7 +105,6 @@ async function getPrestataire(id) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }
@@ -88,7 +119,6 @@ async function getGarage(id) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
     }
-    console.log(res);
     return res; 
     }
 }

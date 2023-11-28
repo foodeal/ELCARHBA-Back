@@ -4,9 +4,10 @@ const Joi = require('joi');
 const validateRequest = require('./../../middleware/validate-request');
 const authorize = require('./../../middleware/authorize')
 const offreService = require('./offre.service');
+var Multer = require("multer");
 
 // routes
-router.post('/fulladd',authorize(), fulladdSchema, fulladd);
+router.post('/fulladd',authorize(), fulladdSchema, Multer().single("file"), fulladd);
 router.post('/add',authorize(), addSchema, add);
 router.get('/', getAll);
 router.get('/filterprix', filterPrix);
