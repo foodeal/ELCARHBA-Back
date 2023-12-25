@@ -2,7 +2,14 @@
 const db = require('../../helpers/db');
 var Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
+// AWS
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+    region: 'de',
+    accessKeyId: 'f6920d3469784ad8af3f72472d89ae56',
+    secretAccessKey: '645c52c0f42f4de5bb3599eea1fb14da',
+    endpoint: "https://s3.de.io.cloud.ovh.net/"
+  });
 
 module.exports = {
     getAll,
@@ -13,6 +20,7 @@ module.exports = {
     findOffre,
     getAvant,
     getExpired,
+    getFile,
     getSort,
     getBest,
     getFilter,
@@ -35,6 +43,21 @@ async function getAllOffres() {
     }
     return res; 
     }
+}
+
+async function getFile(title) {
+    s3.getObject({ Bucket: "elcarhba", Key: title }, function(err, data)
+    {
+        if (err) {
+            res.status(200);
+            res.end('Error Fetching File');
+          }
+          else {
+            res.attachment(title); // Set Filename
+            res.type(data.ContentType); // Set FileType
+            res.send(Buffer.from(data.Body, 'base64'));        // Send File Buffer
+          }
+    });
 }
 
 async function getAll() {
@@ -200,7 +223,7 @@ async function getData(off) {
     if (file) {
       var b = {
         'offre': offre,
-        'files': file.url,
+        'files': await getFile(offre.titre_offre),
         'garage': garage,
         'prestataire': prestataire,
         'stock': stock,
@@ -240,15 +263,26 @@ async function getById(id) {
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     // if (stock) { dispo.nombre_offres = stock.quantite_stock; }
-    let b = {
-        'offre': offre,
-        'files': file,
-        'garage': garage,
-        'prestataire': prestataire,
-        'stock': stock,
-        'avis_count': avis_count,
-        'avis_sum': avis_sum
-    }
+    if (file) {
+        var b = {
+          'offre': offre,
+          'files': await getFile(offre.titre_offre),
+          'garage': garage,
+          'prestataire': prestataire,
+          'stock': stock,
+          'avis_count': avis_count,
+          'avis_sum': avis_sum
+      }
+      } else {
+          var b = {
+              'offre': offre,
+              'garage': garage,
+              'prestataire': prestataire,
+              'stock': stock,
+              'avis_count': avis_count,
+              'avis_sum': avis_sum
+          }
+      }
     dispo = Object.assign(dispo, b);
     return (dispo);
 }
