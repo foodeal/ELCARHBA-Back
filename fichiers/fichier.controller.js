@@ -116,21 +116,27 @@ form.on('progress', (bytesReceived, bytesExpected) => {
  
 // AWS Upload and Download
 router.post('/uploadaws', authorize(), Multer().single("file"), function(req, res) {
-    req.body.path = req.file.path;
-    req.body.name = req.file.originalname;
-    req.body.type = req.file.originalname.substr(req.file.originalname.lastIndexOf('.') + 1);
-    s3.upload({
-        Bucket: "elcarhba",
-        Key: req.file.originalname,
-        Body: req.file.buffer
-        }, (err, data) => {
-        if (err) {
-        console.error(err);
-        } else {
-        console.log(`File uploaded successfully. ${data.Location}`);
+        console.log('Upload');
+        console.log(req.body.offre_titre);
+            const offres = db.Offre.findOne({ where: { titre_offre: req.body.offre_titre }, raw: true });
+    const buffer = Buffer.from(req.body.files);
+            console.log(buffer);
+        req.body.offre  = offres.id;
+        req.body.name = req.body.offre_titre;
+        // req.body.type = req.body.files.originalname.substr(req.files.originalname.lastIndexOf('.') + 1);
+        s3.upload({
+            Bucket: "elcarhba",
+            Key: req.body.offre_titre,
+            Body: buffer
+            }, (err, data) => {
+            if (err) {
+            console.error(err);
+            } else {
+                console.log(`File uploaded successfully. ${data.Location}`);
+                req.body.url = data.Location;
+                fService.create(req.body)
         }
     });
-    fService.create(req.body);
     res.send(req.file);
 });
 

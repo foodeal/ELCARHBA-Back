@@ -25,6 +25,10 @@ async function getById(id) {
 }
 
 async function create(params) {
+    // verif
+    if (!params.lien_fb) {params.lien_fb = ''}
+    if (!params.lien_insta) {params.lien_insta = ''}
+
     // validate
     if (await db.Prestataire_Dmd.findOne({ where: { email_prestataire: params.email_prestataire } })) {
         throw 'Email "' + params.email + '" existe déjà';

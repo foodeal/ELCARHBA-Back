@@ -43,6 +43,7 @@ async function createFull(req, res) {
     req.body.users_stock = 0;
     req.body.offre_dispo_id = am2.id;
     const st = await db.Stock.create(req.body)
+    if (req.file) {
     req.body.link = "";
     req.body.path = req.file.path;
     const fname = req.body.titre_offre.replace(/ /g,'') + am.id;
@@ -64,6 +65,7 @@ async function createFull(req, res) {
         db.Fichier.create(req.body);
         }
     });
+    }
 
     req.date = Date.now();
     req.utilisateur = decoded.sub;

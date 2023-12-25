@@ -183,7 +183,7 @@ async function getBest() {
 async function getData(off) {
     const offre = await db.Offre.findOne({ where: { id: off.offre_id }, raw: true });
     const stock = await db.Stock.findOne({ where: { offre_dispo_id: off.id }, raw: true });
-    const file = await db.Fichier.findAll({ where: { offre: offre.id }, raw: true });
+    const file = await db.Fichier.findAll({ where: { name: offre.titre_offre }, raw: true });
     const garage = await db.Garage.findOne({ where: { prestataire_id: offre.prestataire_id }, raw: true });
         const avis_count = await db.Avis.findOne({ 
         where: { garage_id: await garage.id }, 
@@ -196,15 +196,26 @@ async function getData(off) {
         raw: true 
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
-    if (stock) { off.nombre_offres = stock.quantite_stock; }
-    let b = {
+    // if (stock) { off.nombre_offres = stock.quantite_stock; }
+    if (file) {
+      var b = {
         'offre': offre,
-        'files': file,
+        'files': file.url,
         'garage': garage,
         'prestataire': prestataire,
         'stock': stock,
         'avis_count': avis_count,
         'avis_sum': avis_sum
+    }
+    } else {
+        var b = {
+            'offre': offre,
+            'garage': garage,
+            'prestataire': prestataire,
+            'stock': stock,
+            'avis_count': avis_count,
+            'avis_sum': avis_sum
+        }
     }
     off = Object.assign(off, b);
     return (off)
@@ -228,7 +239,7 @@ async function getById(id) {
         raw: true 
     });
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
-    if (stock) { dispo.nombre_offres = stock.quantite_stock; }
+    // if (stock) { dispo.nombre_offres = stock.quantite_stock; }
     let b = {
         'offre': offre,
         'files': file,
@@ -278,6 +289,9 @@ async function update(id, params) {
 
 async function _delete(params) {
     const offre = await getOffre(params.params.id);
+    const stock = await db.Stock.findOne({ where: { offre_dispo_id: offre.id }, raw: true });
+    const stockdel = await db.Stock.findByPk(stock.id)
+    await stockdel.destroy();
     await offre.destroy();
 
     const userToken = params.headers.authorization;
