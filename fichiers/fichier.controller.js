@@ -116,11 +116,8 @@ form.on('progress', (bytesReceived, bytesExpected) => {
  
 // AWS Upload and Download
 router.post('/uploadaws', authorize(), Multer().single("file"), function(req, res) {
-        console.log('Upload');
-        console.log(req.body.offre_titre);
-            const offres = db.Offre.findOne({ where: { titre_offre: req.body.offre_titre }, raw: true });
-    const buffer = Buffer.from(req.body.files);
-            console.log(buffer);
+        const offres = db.Offre.findOne({ where: { titre_offre: req.body.offre_titre }, raw: true });
+        const buffer = Buffer.from(req.body.files);
         req.body.offre  = offres.id;
         req.body.name = req.body.offre_titre;
         // req.body.type = req.body.files.originalname.substr(req.files.originalname.lastIndexOf('.') + 1);

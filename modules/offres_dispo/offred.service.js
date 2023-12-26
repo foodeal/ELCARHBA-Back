@@ -46,17 +46,21 @@ async function getAllOffres() {
 }
 
 async function getFile(title) {
-    s3.getObject({ Bucket: "elcarhba", Key: title }, function(err, data)
-    {
-        if (err) {
-            return ""
-          }
-          else {
-            // res.attachment(title); // Set Filename
-            // res.type(data.ContentType); // Set FileType
-            return (Buffer.from(data.Body, 'base64'));        // Send File Buffer
-          }
-    });
+    console.log(title);
+    try {
+        const params = {
+          Bucket: "elcarhba",
+          Key: 'Orange_sport_car.png'
+        };
+        // Download the image from S3
+        const { Body } = await s3.getObject(params).promise();
+        // Convert the image body to a Buffer
+        const imageBuffer = Buffer.from(Body);
+        return imageBuffer;
+      } catch (error) {
+        console.error('Error fetching image from S3:', error);
+        throw error;
+      }
 }
 
 async function getAll() {
@@ -220,9 +224,10 @@ async function getData(off) {
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     // if (stock) { off.nombre_offres = stock.quantite_stock; }
     if (file) {
+      const files = await getFile(offre.titre_offre);
       var b = {
         'offre': offre,
-        'files': await getFile(offre.titre_offre),
+        'files': files,
         'garage': garage,
         'prestataire': prestataire,
         'stock': stock,
