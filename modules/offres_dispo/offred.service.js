@@ -49,13 +49,12 @@ async function getFile(title) {
     s3.getObject({ Bucket: "elcarhba", Key: title }, function(err, data)
     {
         if (err) {
-            res.status(200);
-            res.end('Error Fetching File');
+            return ""
           }
           else {
-            res.attachment(title); // Set Filename
-            res.type(data.ContentType); // Set FileType
-            res.send(Buffer.from(data.Body, 'base64'));        // Send File Buffer
+            // res.attachment(title); // Set Filename
+            // res.type(data.ContentType); // Set FileType
+            return (Buffer.from(data.Body, 'base64'));        // Send File Buffer
           }
     });
 }

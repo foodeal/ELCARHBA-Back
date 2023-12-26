@@ -14,9 +14,9 @@ module.exports = {
     updateMdp,
     currentUser,
     getUserByEmail,
+    deactivate,
     delete: _delete
 };
-
 
 async function currentUser(params) {
     console.log("Current");
@@ -27,12 +27,26 @@ async function currentUser(params) {
     return user ;
 }
 
+async function deactivate(params) {
+    const userToken = params.headers.authorization;
+    const token = userToken.split(' ');
+    const decoded = jwt.verify(token[1], 'Foodealz')
+    const user = await db.User.scope('withHash').findOne({ where: { id : decoded.sub } });
+    const userUpd = await db.User.findOne({ where: { id : user.id } });
+    if (userUpd.isActive) { userUpd.isActive = false; }
+    else { userUpd.isActive = true; }
+    Object.assign(user, userUpd);
+    await user.save();
+    return omitHash(user.get()); 
+}
+
 async function authenticate({ email, motdepasse }) {
     const user = await db.User.scope('withHash').findOne({ where: { email } });
 
     if (!user || !(await bcrypt.compare(motdepasse, user.motdepasse)))
         throw 'Mot de passe incorrecte';
-
+    
+    if (user.isActive == false ) { throw 'Votre compte est désactivé'}
     // authentication successful
     const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '7d' });
     console.log("Connected : " + user.id + " Loged In")
@@ -245,7 +259,7 @@ async function create(params) {
         `
 
     // save user
-    await db.User.create(params);
+    const user = await db.User.create(params);
     var transporter = nodemailer.createTransport({
         name: 'elcarhba',
         host: 'mail.solyntek.com',
@@ -260,7 +274,7 @@ async function create(params) {
 
     var mailOptions = {
          from: 'test@solyntek.com',
-         to: pres.email_prestataire,
+         to: user.email,
          subject: 'Welcome !',
          text: 'Welcome to ELCarhba',
          html: html_data
@@ -347,21 +361,22 @@ async function updateMdp(params) {
     await user.save();
 
     var transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
+        name: 'elcarhba',
+        host: 'mail.solyntek.com',
+        port: 465,
+        secure: true,
         requireTLS: true,
          auth: {
-         user: 'lesvergersapp@gmail.com',
-         pass: 'lesvergers'
+         user: 'test@solyntek.com',
+         pass: 'o?zL6-o$e21!'
     }
     });
 
     var mailOptions = {
-         from: 'lesvergersapp@gmail.com',
-         to: 'ahmed.haddad@ieee.org',
+         from: 'test@solyntek.com',
+         to: user.email,
          subject: 'Changer Mot de Passe',
-         text: 'Bonjour '+ user.nom_prenom + ', votre mail est : ' + user.email +'et Mot de passe : '+randomstring+'.'
+         text: 'Bonjour '+ user.nom_prenom + ', votre mail est : ' + user.email +'et Mot de passe : '+randomstring+' .'
     };
 
      transporter.sendMail(mailOptions, function(error, info){

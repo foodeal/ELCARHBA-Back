@@ -12,6 +12,7 @@ router.post('/updateMdp/', updateMdp);
 router.get('/email', getUserByEmail);
 router.get('/data', getUserData);
 router.get('/', authorize(), getAll);
+router.get('/deactivate', authorize(), deactivate);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.put('/:id', authorize(), updateSchema, update);
@@ -55,6 +56,12 @@ function registerSchema(req, res, next) {
 function register(req, res, next) {
     userService.create(req.body)
         .then(() => res.json({ message: 'Succes' }))
+        .catch(next);
+}
+
+function deactivate(req, res, next) {
+    userService.deactivate(req)
+        .then(user => res.json(user))
         .catch(next);
 }
 
