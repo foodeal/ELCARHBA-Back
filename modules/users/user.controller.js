@@ -60,7 +60,7 @@ function register(req, res, next) {
 }
 
 function deactivate(req, res, next) {
-    userService.deactivate(req)
+    userService.deactivate(req.params.id)
         .then(user => res.json(user))
         .catch(next);
 }

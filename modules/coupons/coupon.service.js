@@ -802,7 +802,7 @@ async function getDataCoupon(off) {
         'user': user,
         'offre_dispo': offre_dispo,
         'offre': offre,
-        'files': file,
+        'files': "file",
         'garage': garage,
         'prestataire': prestataire,
         'stock': stock,

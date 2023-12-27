@@ -27,11 +27,8 @@ async function currentUser(params) {
     return user ;
 }
 
-async function deactivate(params) {
-    const userToken = params.headers.authorization;
-    const token = userToken.split(' ');
-    const decoded = jwt.verify(token[1], 'Foodealz')
-    const user = await db.User.scope('withHash').findOne({ where: { id : decoded.sub } });
+async function deactivate(id) {
+    const user = await db.User.scope('withHash').findOne({ where: { id : id } });
     const userUpd = await db.User.findOne({ where: { id : user.id } });
     if (userUpd.isActive) { userUpd.isActive = false; }
     else { userUpd.isActive = true; }
