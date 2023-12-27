@@ -224,10 +224,10 @@ async function getData(off) {
     const prestataire = await db.Prestataire.findOne({ where: { id: offre.prestataire_id }, raw: true });
     // if (stock) { off.nombre_offres = stock.quantite_stock; }
     if (file) {
-      const files = await getFile(offre.titre_offre);
+    //   const files = await getFile(offre.titre_offre);
       var b = {
         'offre': offre,
-        'files': files,
+        'files': "files",
         'garage': garage,
         'prestataire': prestataire,
         'stock': stock,
@@ -270,7 +270,7 @@ async function getById(id) {
     if (file) {
         var b = {
           'offre': offre,
-          'files': await getFile(offre.titre_offre),
+          'files': "files",
           'garage': garage,
           'prestataire': prestataire,
           'stock': stock,

@@ -723,7 +723,7 @@ async function dcryptCode(params) {
             'coupon' : coupon,
             'offre_dispo': offre_dispo,
             'offre': offre,
-            'files': file,
+            'files': "file",
             'garage': garage,
             'prestataire': prestataire,
             'user': user,
