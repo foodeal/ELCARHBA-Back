@@ -707,7 +707,7 @@ async function dcryptCode(params) {
             return 'Stock insuffisant';
         } else {
         const couponUpd = await db.Coupon.findByPk(coupon.id);
-        coupon.coupon_valide = false;
+        // coupon.coupon_valide = false;
         Object.assign(couponUpd, coupon);
         await couponUpd.save();
         stock.gain_stock = stock.gain_stock + offre.prix_remise;

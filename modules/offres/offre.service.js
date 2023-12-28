@@ -22,8 +22,19 @@ module.exports = {
     getPrestataire,
     getGarage,
     createFull,
+    deactivate,
     delete: _delete
 };
+
+async function deactivate(id) {
+    const offre = await db.Offre.scope('withHash').findOne({ where: { id : id } });
+    const offreUpd = await db.offre.findOne({ where: { id : user.id } });
+    if (offreUpd.offre_valid) { offreUpd.offre_valid = false; }
+    else { offreUpd.offre_valid = true; }
+    Object.assign(offre, offreUpd);
+    await offre.save();
+    return omitHash(offre.get()); 
+}
 
 async function createFull(req, res) {
 
@@ -172,7 +183,14 @@ async function create(params) {
 async function update(id, params) {
     const offre = await getOffre(id);
     params.body.prix_points = Math.round(params.body.prix_initial);
+    if (params.body.nombre_offres) {
+    const dispo = await db.Offre_Dispo.findOne({ where: { offre_id: offre.id }, raw: true });
+    const stock = await db.Stock.findOne({ where: { offre_dispo_id: dispo.id }, raw: true });
+    const stockUpd = await db.Stock.findOne({ where: { offre_dispo_id: dispo.id }, raw: true });
+    stockUpd.quantite_stock = params.body.nombre_offres;
     // copy params to am and save
+    Object.assign(stock, stockUpd);
+    }
     Object.assign(offre, params.body);
     await offre.save();
 

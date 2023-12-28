@@ -12,7 +12,7 @@ router.post('/updateMdp/', updateMdp);
 router.get('/email', getUserByEmail);
 router.get('/data', getUserData);
 router.get('/', authorize(), getAll);
-router.get('/deactivate', authorize(), deactivate);
+router.get('/deactivate/:id', authorize(), deactivate);
 router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.put('/:id', authorize(), updateSchema, update);

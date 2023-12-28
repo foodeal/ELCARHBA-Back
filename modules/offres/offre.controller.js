@@ -17,6 +17,7 @@ router.get('/fichiers/:id', authorize(), getFichiers);
 router.get('/prestataire/:id', authorize(), getPrestataire);
 router.get('/garage/:id', authorize(), getGarage);
 router.post('/soffre/', findOffre);
+router.get('/deactivate/:id', authorize(), deactivate);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
 
@@ -95,6 +96,12 @@ function getPrestataire(req, res, next) {
         .catch(next);
 }
 
+function deactivate(req, res, next) {
+    offreService.deactivate(req.params.id)
+        .then(offre => res.json(offre))
+        .catch(next);
+}
+
 function getGarage(req, res, next) {
     offreService.getGarage(req.params.id)
         .then(offres => res.json(offres))
@@ -135,6 +142,7 @@ function updateSchema(req, res, next) {
         prestataire_id: Joi.number(),
         categorie: Joi.string(),
         motorisation: Joi.string().default("").allow(""),
+        nombre_offres: Joi.number().default(0).allow(0).min(0),
         diametre: Joi.string().default(0).allow(0),
         type_huile: Joi.string().default("").allow(""),
         marque: Joi.string().default("").allow(""),
