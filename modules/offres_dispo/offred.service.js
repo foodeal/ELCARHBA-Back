@@ -38,7 +38,8 @@ async function getAllOffres() {
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        if (ofs[i].offre_valid) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.offre_valid) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
         }
@@ -75,7 +76,8 @@ async function getAll() {
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        if (ofs[i].offre_valid) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.offre_valid) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
         }
@@ -91,12 +93,10 @@ async function getPaginationPrestataire(id) {
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
         const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
-        if (offre.prestataire_id == id)
+        if (offre.prestataire_id == id && offre.offre_valid)
         {
-            if (ofs[i].offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
-            }
         }
     }
     return res; 
@@ -110,12 +110,10 @@ async function getPrestataire(id) {
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
         const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
-        if (offre.prestataire_id == id)
+        if (offre.prestataire_id == id && offre.offre_valid)
         {
-            if (ofs[i].offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
-            }
         }
     }
     return res; 
@@ -136,7 +134,8 @@ async function getAvant() {
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        if (ofs[i].offre_valid) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.offre_valid) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
         }
@@ -151,7 +150,8 @@ async function getExpired() {
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        if (ofs[i].offre_valid) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.offre_valid) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
         }
@@ -168,7 +168,8 @@ async function getSort(params) {
         var res = [];
         if (ofs.length) {
         for (let i=0; i < ofs.length; i++) {
-            if (ofs[i].offre_valid) {
+            const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+            if (offre.offre_valid) {
             const ofsf = await getData(ofs[i]);
             res = res.concat(ofsf);
             }
@@ -186,10 +187,11 @@ async function getSort(params) {
              var ofs = JSON.parse(JSON.stringify(offres));
              if (ofs.length) {
              for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
-                 const ofsf = await getData(ofs[i]);
-                 res = res.concat(ofsf);
-                } 
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
+                const ofsf = await getData(ofs[i]);
+                res = res.concat(ofsf);
+                }
              }            
          }}   
          }} 
@@ -200,7 +202,8 @@ async function getSort(params) {
         var res = [];
         if (ofs.length) {
         for (let i=0; i < ofs.length; i++) {
-            if (ofs[i].offre_valid) {
+            const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+            if (offre.offre_valid) {
             const ofsf = await getData(ofs[i]);
             res = res.concat(ofsf);
             }
@@ -216,7 +219,8 @@ async function getBest() {
     var res = [];
     if (ofs.length) {
     for (let i=0; i < ofs.length; i++) {
-        if (ofs[i].offre_valid) {
+        const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+        if (offre.offre_valid) {
         const ofsf = await getData(ofs[i]);
         res = res.concat(ofsf);
         }
@@ -392,7 +396,8 @@ async function findOffre(params) {
             console.log(ofs.length)
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
                 }
@@ -415,7 +420,8 @@ async function findOffre(params) {
             console.log(ofs.length)
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
                 }
@@ -437,7 +443,8 @@ async function findOffre(params) {
             console.log(ofs.length)
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
                 }
@@ -459,7 +466,8 @@ async function findOffre(params) {
             console.log(ofs.length)
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
                 }
@@ -474,7 +482,8 @@ async function findOffre(params) {
         var res = [];
         if (ofs.length) {
         for (let i=0; i < ofs.length; i++) {
-            if (ofs[i].offre_valid) {
+            const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+            if (offre.offre_valid) {
             const ofsf = await getData(ofs[i]);
             res = res.concat(ofsf);
             }
@@ -503,7 +512,8 @@ async function getFilter(params) {
             console.log(ofs.length)
             if (ofs.length) {
             for (let i=0; i < ofs.length; i++) {
-                if (ofs[i].offre_valid) {
+                const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                if (offre.offre_valid) {
                 const ofsf = await getData(ofs[i]);
                 res = res.concat(ofsf);
                 }
@@ -525,7 +535,8 @@ async function getFilter(params) {
                 console.log(ofs.length)
                 if (ofs.length) {
                 for (let i=0; i < ofs.length; i++) {
-                    if (ofs[i].offre_valid) {
+                    const offre = await db.Offre.findOne({ where: { id: ofs[i].offre_id }, raw: true });
+                    if (offre.offre_valid) {
                     const ofsf = await getData(ofs[i]);
                     res = res.concat(ofsf);
                     }
