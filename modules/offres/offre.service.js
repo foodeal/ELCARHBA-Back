@@ -28,7 +28,7 @@ module.exports = {
 
 async function deactivate(id) {
     const offre = await db.Offre.scope('withHash').findOne({ where: { id : id } });
-    const offreUpd = await db.offre.findOne({ where: { id : user.id } });
+    const offreUpd = await db.Offre.findOne({ where: { id : offre.id } });
     if (offreUpd.offre_valid) { offreUpd.offre_valid = false; }
     else { offreUpd.offre_valid = true; }
     Object.assign(offre, offreUpd);
