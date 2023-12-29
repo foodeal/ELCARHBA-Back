@@ -186,10 +186,11 @@ async function update(id, params) {
     if (params.body.nombre_offres) {
     const dispo = await db.Offre_Dispo.findOne({ where: { offre_id: offre.id }, raw: true });
     const stock = await db.Stock.findOne({ where: { offre_dispo_id: dispo.id }, raw: true });
-    const stockUpd = await db.Stock.findOne({ where: { offre_dispo_id: dispo.id }, raw: true });
-    stockUpd.quantite_stock = params.body.nombre_offres;
+    stock.quantite_stock = params.body.nombre_offres;
+    const stockUpd =  await db.Stock.findByPk(stock.id);
+    Object.assign(stockUpd, stock);
+    await stockUpd.save();
     // copy params to am and save
-    Object.assign(stock, stockUpd);
     }
     Object.assign(offre, params.body);
     await offre.save();
