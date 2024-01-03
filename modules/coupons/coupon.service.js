@@ -20,6 +20,8 @@ module.exports = {
     addPoint,
     getDataCoupon,
     createByPoints,
+    getDispoPres,
+    getExpiredPres,
     dcryptCode,
     serieCoupon,
     getAllExpired,
@@ -57,8 +59,22 @@ async function getData(cp) {
     return (cp)
 }
 
-async function getCouponDispo() {
-    coupons = await db.Coupon.findAll({ where: { date_valide_coupon : { [Op.gt]: new Date() } } });
+async function getExpiredPres(id) {
+  coupons = await db.Coupon.findAll({ where: { date_valide_coupon : { [Op.gt]: new Date() }, prestataire_id:id, coupon_valide:true } });
+  var cps = JSON.parse(JSON.stringify(coupons));
+  var res = [];
+  if (cps.length) {
+  for (let i=0; i < cps.length; i++) {
+      const cpsf = await getDataCoupon(cps[i]);
+      res = res.concat(cpsf);
+  }
+  console.log(res);
+  return res; 
+  }
+}
+
+async function getDispoPres(id) {
+    coupons = await db.Coupon.findAll({ where: { prestataire_id:id, coupon_expire: true } });
     var cps = JSON.parse(JSON.stringify(coupons));
     var res = [];
     if (cps.length) {
@@ -70,6 +86,21 @@ async function getCouponDispo() {
     return res; 
     }
 }
+
+async function getCouponDispo() {
+  coupons = await db.Coupon.findAll({ where: { date_valide_coupon : { [Op.gt]: new Date() }, coupon_valide:true } });
+  var cps = JSON.parse(JSON.stringify(coupons));
+  var res = [];
+  if (cps.length) {
+  for (let i=0; i < cps.length; i++) {
+      const cpsf = await getDataCoupon(cps[i]);
+      res = res.concat(cpsf);
+  }
+  console.log(res);
+  return res; 
+  }
+}
+
 
 async function getAllExpired() {
     coupons = await db.Coupon.findAll({ where: { [Op.and] : [
@@ -173,7 +204,7 @@ async function create(params) {
     const offre = await getOffre(params.body.offre_id);
     const stock = await db.Stock.findOne({ where: { offre_dispo_id: await offre.id }, raw: true });
     if (stock.quantite_stock < params.body.quantite) {
-        return "Nombre des offres insuffisant"
+      throw "Nombre des offres insuffisant"
     } 
     else {
     code = params.body.user_id + "," + params.body.prestataire_id + "," + params.body.offre_id + "," + params.body.date_creation_coupon.toString().substring(-1,15) + "," + params.body.date_valide_coupon.toString().substring(-1,15);
@@ -428,9 +459,9 @@ async function createByPoints(params) {
     const user = await db.User.findByPk(params.body.user_id);
     const stock = await db.Stock.findOne({ where: { offre_dispo_id: offre.id }, raw: true });
     if (stock.quantite_stock < params.body.quantite) {
-        return "Nombre des offres insuffisant";
+        throw "Nombre des offres insuffisant";
     } else if (user.point_gagner < main_offre.prix_points) {
-        return "Nombre de points insuffisant";
+        throw "Nombre de points insuffisant";
     } else {
     user.point_gagner = user.point_gagner - main_offre.prix_points;
     const userUpd = await db.User.findByPk(params.body.user_id);

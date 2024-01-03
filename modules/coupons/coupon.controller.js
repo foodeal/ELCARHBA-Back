@@ -14,6 +14,8 @@ router.get('/current', authorize(), getCurrent);
 router.get('/:id', authorize(), getById);
 router.get('/expire/:id', authorize(), getExpired);
 router.get('/valide/:id', authorize(), getValide);
+router.get('/expirepres/:id', authorize(), getExpired);
+router.get('/validepres/:id', authorize(), getValide);
 router.get('/allexpired', authorize(), getAllExpired);
 router.get('/allvalides', authorize(), getAllValide);
 router.post('/scoupon/', authorize(), findCoupon);
@@ -90,6 +92,18 @@ function getById(req, res, next) {
 
 function getExpired(req, res, next) {
     couponService.getExpired(req.params.id)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function getDispoPres(req, res, next) {
+    couponService.getDispoPres(req.params.id)
+        .then(coupon => res.json(coupon))
+        .catch(next);
+}
+
+function getExpiredPres(req, res, next) {
+    couponService.getExpiredPres(req.params.id)
         .then(coupon => res.json(coupon))
         .catch(next);
 }
