@@ -856,8 +856,10 @@ async function serieCoupon(params) {
         const coupon = await db.Coupon.findOne({ where: { serie_coupon : params.serie_coupon }});
         if (!(coupon)) {throw 'Vide' }
         else {
-          const couponData = await getDataCoupon(coupon.get());
-          return couponData;
+          params.code = coupon.code_coupon;
+          // const couponData = await getDataCoupon(coupon.get());
+          // return couponData;
+          return dcryptCode(params);
         }
     } 
     else { throw 'Vide' ;}
