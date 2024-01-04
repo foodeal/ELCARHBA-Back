@@ -60,7 +60,7 @@ async function getData(cp) {
 }
 
 async function getExpiredPres(id) {
-  coupons = await db.Coupon.findAll({ where: {[Op.and] : [ { date_valide_coupon : { [Op.gt]: new Date() }, prestataire_id:id, coupon_expire:true } ]}});
+  coupons = await db.Coupon.findAll({ where: {prestataire_id:id, [Op.or] : [ { coupon_valide:false, coupon_expire:true } ]}});
   var cps = JSON.parse(JSON.stringify(coupons));
   var res = [];
   if (cps.length) {
