@@ -35,6 +35,7 @@ async function create(params) {
     }
 
     // save prestataire
+    params.motdepasse = await bcrypt.hash(params.motdepasse, 10);
     await db.Prestataire_Dmd.create(params);
 }
 
