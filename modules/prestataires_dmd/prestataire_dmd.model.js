@@ -21,6 +21,7 @@ function Prestataire_Dmd(sequelize) {
         contrat_condition: { type: DataTypes.STRING, allowNull: true },
         categorie: { type: DataTypes.STRING, allowNull: true },
         nom_garage: { type: DataTypes.STRING, allowNull: true },
+        motdepasse: { type: DataTypes.STRING, allowNull: true },
         heures_travail: { type: DataTypes.STRING, allowNull: true },
         jours_travail: { type: DataTypes.STRING, allowNull: true },
         adresse_garage: { type: DataTypes.STRING, allowNull: true },

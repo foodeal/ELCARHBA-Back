@@ -84,22 +84,8 @@ async function validatePrestataire(id) {
     const prestataire = await db.Prestataire.findOne({ where: { email_prestataire: dmd.email_prestataire } });
     if (prestataire) throw 'Utilisateur exist';
     else {
-    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz"; 
-    var string_length = 8; var randomstring = ''; 
-    var charCount = 0; var numCount = 0; 
-    for (var i=0; i<string_length; i++) { 
-        if((Math.floor(Math.random() * 2) == 0) && numCount < 3 || charCount >= 5) { 
-            var rnum = Math.floor(Math.random() * 10); 
-            randomstring += rnum; numCount += 1; } 
-            else { 
-                var rnum = Math.floor(Math.random() * chars.length); 
-                randomstring += chars.substring(rnum,rnum+1); 
-                charCount += 1; } 
-    }
-
     var params = omitHash(dmd.get());
     delete params.id;
-    params.motdepasse = await bcrypt.hash(randomstring, 10);
     const pres = await db.Prestataire.create(params);
     console.log(pres.id);
     params.prestataire_id = pres.id
@@ -121,9 +107,9 @@ async function validatePrestataire(id) {
     var mailOptions = {
          from: 'test@solyntek.com',
          to: pres.email_prestataire,
-         subject: 'Changer Mot de Passe',
-         text: 'Mot de passe ELCarhba',
-         html: `Bonjour `+ pres.nom_prestataire + `, votre mail est : ` + pres.email_prestataire + ` et Mot de passe : <h3>`+ randomstring + `</h3>.`
+         subject: 'Welcome',
+         text: 'Prestataire ELCarhba',
+         html: `Bonjour `+ pres.nom_prestataire + `, votre mail est : ` + pres.email_prestataire + ` .`
     };
 
      transporter.sendMail(mailOptions, function(error, info){
